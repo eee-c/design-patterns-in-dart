@@ -1,6 +1,6 @@
 library visitor;
 
-import 'equipment.dart';
+import 'inventory.dart';
 
 abstract class EquipmentVisitor {
   void visitMobile(Mobile m);

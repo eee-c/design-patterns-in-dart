@@ -1,7 +1,7 @@
 #!/usr/bin/env dart
 
 import 'package:visitor_code/visitor.dart';
-import 'package:visitor_code/equipment.dart';
+import 'package:visitor_code/inventory.dart';
 
 main() {
   var cost = new PricingVisitor();
