@@ -2,18 +2,21 @@ library visitor;
 
 import 'inventory.dart';
 
-abstract class EquipmentVisitor {
-  void visitMobile(Mobile m);
-  void visitTablet(Tablet t);
-  void visitLaptop(Laptop l);
+abstract class InventoryVisitor {
+  void visitMobile(Mobile i);
+  void visitTablet(Tablet i);
+  void visitLaptop(Laptop i);
+  void visitApp(App i);
 }
 
-class PricingVisitor extends EquipmentVisitor {
+class PricingVisitor extends InventoryVisitor {
   double _totalPrice = 0.00;
 
   double get totalPrice => _totalPrice;
 
-  void visitMobile(e) { _totalPrice += e.netPrice; }
-  void visitTablet(e) { _totalPrice += e.discountPrice(); }
-  void visitLaptop(e) { _totalPrice += e.discountPrice(); }
+  void visitMobile(i) { _totalPrice += i.netPrice; }
+  void visitTablet(i) { _totalPrice += i.discountPrice(); }
+  void visitLaptop(i) { _totalPrice += i.discountPrice(); }
+
+  void visitApp(i) { _totalPrice += 0.5 * i.discountPrice(); }
 }
