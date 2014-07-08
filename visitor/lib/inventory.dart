@@ -1,5 +1,10 @@
 library inventory;
 
+App app(name, {price: 0}) => new App(name)..netPrice = price;
+Mobile mobile([name]) => new Mobile()..name = name;
+Tablet tablet([name]) => new Tablet()..name = name;
+Laptop laptop([name]) => new Laptop()..name = name;
+
 abstract class Inventory {
   String name;
   Inventory(this.name);
@@ -24,8 +29,6 @@ abstract class Equipment extends Inventory {
   Equipment(name): super(name);
   int watt;
 }
-
-App app(name, {price: 0}) => new App(name)..netPrice = price;
 
 class App extends Inventory {
   App(name): super(name);
