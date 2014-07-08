@@ -18,8 +18,6 @@ main() {
     new Laptop()
   ]);
 
-  print(work_stuff.names());
-
   var cost = new PricingVisitor();
   work_stuff.accept(cost);
   print('Cost of work stuff: ${cost.totalPrice}.');

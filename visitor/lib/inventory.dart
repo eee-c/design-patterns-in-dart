@@ -15,9 +15,6 @@ class InventoryCollection {
   List<Inventory> stuff = [];
   InventoryCollection(this.stuff);
 
-  String names() =>
-    stuff.map((i) => i.name).join('\n');
-
   void accept(visitor) {
     stuff.forEach((thing) { thing.accept(visitor); });
   }
