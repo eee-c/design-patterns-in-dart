@@ -19,4 +19,8 @@ main() {
   var cost = new PricingVisitor();
   work_stuff.accept(cost);
   print('Cost of work stuff: ${cost.totalPrice}.');
+
+  var counter = new TypeCountVisitor();
+  work_stuff.accept(counter);
+  print('I have ${counter.apps} apps!');
 }

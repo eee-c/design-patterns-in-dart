@@ -20,3 +20,24 @@ class PricingVisitor extends InventoryVisitor {
 
   void visitApp(i) { _totalPrice += 0.5 * i.discountPrice(); }
 }
+
+class TypeCountVisitor extends InventoryVisitor {
+  Map<String,int> _count = {
+    'mobile': 0,
+    'tablet': 0,
+    'laptop': 0,
+    'app': 0
+  };
+
+  int get mobiles => _count['mobile'];
+  void visitMobile(i) { _count['mobile']++; }
+
+  int get tablets => _count['tablet'];
+  void visitTablet(i) { _count['tablet']++; }
+
+  int get laptops => _count['laptop'];
+  void visitLaptop(i) { _count['laptop']++; }
+
+  int get apps => _count['app'];
+  void visitApp(i) { _count['app']++; }
+}
