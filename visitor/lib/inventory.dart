@@ -10,10 +10,25 @@ abstract class Inventory {
   void accept(vistor);
 }
 
+class InventoryCollection {
+  String name;
+  List<Inventory> stuff = [];
+  InventoryCollection(this.stuff);
+
+  String names() =>
+    stuff.map((i) => i.name).join('\n');
+
+  void accept(visitor) {
+    stuff.forEach((thing) { thing.accept(visitor); });
+  }
+}
+
 abstract class Equipment extends Inventory {
   Equipment(name): super(name);
   int watt;
 }
+
+App app(name, {price: 0}) => new App(name)..netPrice = price;
 
 class App extends Inventory {
   App(name): super(name);
