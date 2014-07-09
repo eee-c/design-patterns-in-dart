@@ -12,4 +12,4 @@ Learn Dart, Design Patterns and how to love again.
 License
 -------
 
-The code in this repository (_except for the gh-pages branch_) is licensed under the MIT License.
+The code in this repository (_except for the gh-pages branch_) is licensed under the [MIT License](LICENSE).
