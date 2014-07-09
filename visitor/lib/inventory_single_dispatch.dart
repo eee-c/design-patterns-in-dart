@@ -1,4 +1,4 @@
-library inventory;
+library inventory1; // iterators single dispatch
 
 App app(name, {price: 0}) => new App(name)..netPrice = price;
 Mobile mobile([name]) => new Mobile()..name = name;
@@ -44,7 +44,7 @@ class Mobile extends EquipmentWithApps {
   Mobile(): super('Mobile Phone');
   double netPrice = 350.00;
   void accept(visitor) {
-    apps.forEach((app) { app.accept(visitor); });
+    apps.forEach((app) { visitor.visitApp(app); });
     visitor.visitMobile(this);
   }
 }
@@ -53,7 +53,7 @@ class Tablet extends EquipmentWithApps {
   Tablet(): super('Tablet');
   double netPrice = 400.00;
   void accept(visitor) {
-    apps.forEach((app) { app.accept(visitor); });
+    apps.forEach((app) { visitor.visitApp(app); });
     visitor.visitTablet(this);
   }
 }

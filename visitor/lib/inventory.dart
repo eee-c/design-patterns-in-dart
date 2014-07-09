@@ -1,4 +1,4 @@
-library inventory;
+library inventory2; // iterators double dispatch
 
 App app(name, {price: 0}) => new App(name)..netPrice = price;
 Mobile mobile([name]) => new Mobile()..name = name;

@@ -1,6 +1,6 @@
 library visitor;
 
-import 'inventory.dart';
+import 'inventory_single_dispatch.dart';
 
 abstract class InventoryVisitor {
   void visitMobile(Mobile i);
