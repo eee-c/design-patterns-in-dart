@@ -1,1 +1,3 @@
 name: visitor_code
+dev_dependencies:
+  benchmark_harness: any
