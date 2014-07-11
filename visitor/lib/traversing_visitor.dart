@@ -11,26 +11,24 @@ abstract class InventoryVisitor {
 }
 
 class PricingVisitor extends InventoryVisitor {
-  double _totalPrice = 0.00;
-
-  double get totalPrice => _totalPrice;
+  double totalPrice = 0.00;
 
   void visitInventoryCollection(i) {
     _iterate(i.stuff);
   }
   void visitMobile(i) {
     _iterate(i.apps);
-    _totalPrice += i.netPrice;
+    totalPrice += i.netPrice;
   }
   void visitTablet(i) {
     _iterate(i.apps);
-    _totalPrice += i.discountPrice();
+    totalPrice += i.discountPrice();
   }
   void visitLaptop(i) {
-    _totalPrice += i.discountPrice();
+    totalPrice += i.discountPrice();
   }
   void visitApp(i) {
-    _totalPrice += 0.5 * i.discountPrice();
+    totalPrice += 0.5 * i.discountPrice();
   }
 
   void _iterate(list) {

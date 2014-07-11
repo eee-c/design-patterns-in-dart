@@ -4,6 +4,14 @@ import 'package:benchmark_harness/benchmark_harness.dart';
 
 import 'package:visitor_code/traversing_visitor.dart';
 
+main () {
+  _setup();
+
+  TraversingVisitorBenchmark.main();
+  TraversingVisitorBenchmark.main();
+  TraversingVisitorBenchmark.main();
+}
+
 var visitor, nodes;
 
 _setup(){
@@ -19,18 +27,25 @@ _setup(){
 }
 
 class TraversingVisitorBenchmark extends BenchmarkBase {
-  const TraversingVisitorBenchmark() : super("Visitor Traverses");
+  const TraversingVisitorBenchmark() :
+    super(
+      "Visitor Traverses",
+      emitter: const ProperPrecisionScoreEmitter()
+    );
   static void main() { new TraversingVisitorBenchmark().report(); }
 
   void run() {
-    nodes.accept(visitor);
-    // print('Cost of work stuff: ${visitor.totalPrice}.');
+    for (var i=0; i<10^6; i++) {
+      visitor.totalPrice = 0.0;
+      nodes.accept(visitor);
+    }
   }
 }
 
-main () {
-  _setup();
+class ProperPrecisionScoreEmitter implements ScoreEmitter {
+  const ProperPrecisionScoreEmitter();
 
-  TraversingVisitorBenchmark.main();
-  TraversingVisitorBenchmark.main();
+  void emit(String testName, double value) {
+    print("$testName (RunTime): ${value.toStringAsPrecision(4)} µs.");
+  }
 }

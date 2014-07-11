@@ -1,6 +1,7 @@
 library visitor;
 
 import 'inventory_single_dispatch.dart';
+export 'inventory_single_dispatch.dart';
 
 abstract class InventoryVisitor {
   void visitMobile(Mobile i);
@@ -10,15 +11,13 @@ abstract class InventoryVisitor {
 }
 
 class PricingVisitor extends InventoryVisitor {
-  double _totalPrice = 0.00;
+  double totalPrice = 0.00;
 
-  double get totalPrice => _totalPrice;
+  void visitMobile(i) { totalPrice += i.netPrice; }
+  void visitTablet(i) { totalPrice += i.discountPrice(); }
+  void visitLaptop(i) { totalPrice += i.discountPrice(); }
 
-  void visitMobile(i) { _totalPrice += i.netPrice; }
-  void visitTablet(i) { _totalPrice += i.discountPrice(); }
-  void visitLaptop(i) { _totalPrice += i.discountPrice(); }
-
-  void visitApp(i) { _totalPrice += 0.5 * i.discountPrice(); }
+  void visitApp(i) { totalPrice += 0.5 * i.discountPrice(); }
 }
 
 class TypeCountVisitor extends InventoryVisitor {
