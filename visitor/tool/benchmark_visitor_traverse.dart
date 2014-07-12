@@ -2,14 +2,14 @@
 
 import 'package:benchmark_harness/benchmark_harness.dart';
 
-import 'package:visitor_code/visitor.dart';
+import 'package:visitor_code/alt/visitor_traverse/visitor.dart';
 
 main () {
   _setup();
 
-  NodesDoubleBenchmark.main();
-  NodesDoubleBenchmark.main();
-  NodesDoubleBenchmark.main();
+  TraversingVisitorBenchmark.main();
+  TraversingVisitorBenchmark.main();
+  TraversingVisitorBenchmark.main();
 }
 
 var visitor, nodes;
@@ -26,13 +26,14 @@ _setup(){
   }
 }
 
-class NodesDoubleBenchmark extends BenchmarkBase {
-  const NodesDoubleBenchmark() :
+class TraversingVisitorBenchmark extends BenchmarkBase {
+  const TraversingVisitorBenchmark() :
     super(
-      "Nodes iterate w/ double dispatch",
+      "Visitor Traverses",
       emitter: const ProperPrecisionScoreEmitter()
     );
-  static void main() { new NodesDoubleBenchmark().report(); }
+
+  static void main() { new TraversingVisitorBenchmark().report(); }
 
   void run() {
     for (var i=0; i<10^6; i++) {

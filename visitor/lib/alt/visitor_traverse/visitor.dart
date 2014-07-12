@@ -1,7 +1,7 @@
 library visitor;
 
-import 'inventory_non_traversing.dart';
-export 'inventory_non_traversing.dart';
+import 'inventory.dart';
+export 'inventory.dart';
 
 abstract class InventoryVisitor {
   void visitMobile(Mobile i);
