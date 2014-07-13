@@ -36,7 +36,7 @@ class VisitorBenchmark extends BenchmarkBase {
   static void main() { new VisitorBenchmark().report(); }
 
   void run() {
-    for (var i=0; i<10^6; i++) {
+    for (var i=0; i<10; i++) {
       visitor.totalPrice = 0.0;
       nodes.accept(visitor);
     }
