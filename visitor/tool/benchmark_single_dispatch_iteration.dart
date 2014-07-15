@@ -1,18 +1,25 @@
 #!/usr/bin/env dart
 
 import 'package:benchmark_harness/benchmark_harness.dart';
+import 'src/config.dart';
+import 'src/proper_precision_score_emitter.dart';
 
 import 'package:visitor_code/alt/single_dispatch_iteration/visitor.dart';
 
-main () {
-  _setup();
+var visitor, nodes;
+int loopSize, numberOfRuns;
 
-  NodesSingleBenchmark.main();
-  NodesSingleBenchmark.main();
-  NodesSingleBenchmark.main();
+main (List<String> args) {
+  var conf = new Config(args);
+  loopSize = conf.loopSize;
+  numberOfRuns = conf.numberOfRuns;
+
+  _setup();
+  for (var i=0; i<numberOfRuns; i++) {
+    NodesSingleBenchmark.main();
+  }
 }
 
-var visitor, nodes;
 
 _setup(){
   visitor = new PricingVisitor();
@@ -36,17 +43,9 @@ class NodesSingleBenchmark extends BenchmarkBase {
   static void main() { new NodesSingleBenchmark().report(); }
 
   void run() {
-    for (var i=0; i<10; i++) {
+    for (var i=0; i<loopSize; i++) {
       visitor.totalPrice = 0.0;
       nodes.accept(visitor);
     }
-  }
-}
-
-class ProperPrecisionScoreEmitter implements ScoreEmitter {
-  const ProperPrecisionScoreEmitter();
-
-  void emit(String testName, double value) {
-    print("$testName (RunTime): ${value.toStringAsPrecision(4)} µs.");
   }
 }
