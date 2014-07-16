@@ -2,9 +2,11 @@
 
 import 'package:benchmark_harness/benchmark_harness.dart';
 import 'src/config.dart';
-import 'src/proper_precision_score_emitter.dart';
+import 'src/score_emitters.dart';
 
 import 'package:visitor_code/alt/single_dispatch_iteration/visitor.dart';
+
+const String NAME = "Nodes iterate w/ single dispatch";
 
 var visitor, nodes;
 int loopSize, numberOfRuns;
@@ -15,8 +17,10 @@ main (List<String> args) {
   numberOfRuns = conf.numberOfRuns;
 
   _setup();
-  for (var i=0; i<numberOfRuns; i++) {
-    NodesSingleBenchmark.main();
+  for (var i=0; i<=numberOfRuns; i++) {
+    double score = NodesSingleBenchmark.main();
+    if (i == 0) continue;
+    printCsvLoop(NAME, score, loopSize);
   }
 }
 
@@ -34,13 +38,9 @@ _setup(){
 }
 
 class NodesSingleBenchmark extends BenchmarkBase {
-  const NodesSingleBenchmark() :
-    super(
-      "Nodes iterate w/ single dispatch",
-      emitter: const ProperPrecisionScoreEmitter()
-    );
+  const NodesSingleBenchmark(): super(NAME);
 
-  static void main() { new NodesSingleBenchmark().report(); }
+  static double main()=> new NodesSingleBenchmark().measure();
 
   void run() {
     for (var i=0; i<loopSize; i++) {

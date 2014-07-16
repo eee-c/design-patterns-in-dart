@@ -2,9 +2,11 @@
 
 import 'package:benchmark_harness/benchmark_harness.dart';
 import 'src/config.dart';
-import 'src/proper_precision_score_emitter.dart';
+import 'src/score_emitters.dart';
 
 import 'package:visitor_code/alt/visitor_traverse/visitor.dart';
+
+const String NAME = "Visitor Traverses";
 
 var visitor, nodes;
 int loopSize, numberOfRuns;
@@ -15,8 +17,10 @@ main (List<String> args) {
   numberOfRuns = conf.numberOfRuns;
 
   _setup();
-  for (var i=0; i<numberOfRuns; i++) {
-    TraversingVisitorBenchmark.main();
+  for (var i=0; i<=numberOfRuns; i++) {
+    double score = TraversingVisitorBenchmark.main();
+    if (i == 0) continue;
+    printCsvLoop(NAME, score, loopSize);
   }
 }
 
@@ -33,13 +37,9 @@ _setup(){
 }
 
 class TraversingVisitorBenchmark extends BenchmarkBase {
-  const TraversingVisitorBenchmark() :
-    super(
-      "Visitor Traverses",
-      emitter: const ProperPrecisionScoreEmitter()
-    );
+  const TraversingVisitorBenchmark(): super(NAME);
 
-  static void main() { new TraversingVisitorBenchmark().report(); }
+  static double main()=> new TraversingVisitorBenchmark().measure();
 
   void run() {
     for (var i=0; i<loopSize; i++) {

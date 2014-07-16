@@ -9,3 +9,13 @@ class ProperPrecisionScoreEmitter implements ScoreEmitter {
     print('$testName (RunTime), ${value.toStringAsPrecision(4)}, µs');
   }
 }
+
+void printCsvLoop(name, score, loopSize) {
+  print(csvLoop(name, score, loopSize));
+}
+
+String csvLoop(name, score, loopSize) =>
+  '${name} (RunTime in µs), '
+  '${score.toStringAsPrecision(4)}, '
+  '${loopSize}, '
+  '${(score/loopSize).toStringAsPrecision(4)}';
