@@ -15,13 +15,16 @@ main (List<String> args) {
   var conf = new Config(args);
   loopSize = conf.loopSize;
   numberOfRuns = conf.numberOfRuns;
+  List<double> results = new List(numberOfRuns);
 
   _setup();
   for (var i=0; i<=numberOfRuns; i++) {
     double score = NodesSingleBenchmark.main();
-    if (i == 0) continue;
-    printCsvLoop(NAME, score, loopSize);
+    if (i == 0) continue; // Ignore first run (extra warm up)
+    results[i-1] = score;
   }
+  results.forEach((s){ recordCsvRecord(NAME, s, loopSize); });
+  recordCsvTotal(NAME, results, loopSize, numberOfRuns);
 }
 
 
