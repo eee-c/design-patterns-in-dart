@@ -23,8 +23,8 @@ main (List<String> args) {
     if (i == 0) continue; // Ignore first run (extra warm up)
     results[i-1] = score;
   }
-  results.forEach((s){ recordCsvRecord(NAME, s, loopSize); });
-  recordCsvTotal(NAME, results, loopSize, numberOfRuns);
+  // results.forEach((s){ recordTsvRecord(NAME, s, loopSize); });
+  recordTsvTotal(NAME, results, loopSize, numberOfRuns);
 }
 
 

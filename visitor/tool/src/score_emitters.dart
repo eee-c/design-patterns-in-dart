@@ -4,6 +4,9 @@ import 'dart:io';
 
 import 'package:benchmark_harness/benchmark_harness.dart';
 
+const LOOP_RESULTS_FILE = 'tmp/benchmark_loop_runs.tsv';
+const SUMMARY_FILE = 'tmp/benchmark_summary.tsv';
+
 class ProperPrecisionScoreEmitter implements ScoreEmitter {
   const ProperPrecisionScoreEmitter();
 
@@ -12,29 +15,29 @@ class ProperPrecisionScoreEmitter implements ScoreEmitter {
   }
 }
 
-void recordCsvRecord(name, score, loopSize) {
-  print(csvLoop(name, score, loopSize));
+void recordTsvRecord(name, score, loopSize) {
+  print(tsvLoop(name, score, loopSize));
 }
 
-String csvLoop(name, score, loopSize) =>
-  '${name} (RunTime in µs), '
-  '${score.toStringAsPrecision(4)}, '
-  '${loopSize}, '
+String tsvLoop(name, score, loopSize) =>
+  '${name} (RunTime in µs)\t'
+  '${score.toStringAsPrecision(4)}\t'
+  '${loopSize}\t'
   '${(score/loopSize).toStringAsPrecision(4)}';
 
-recordCsvTotal(name, results, loopSize, numberOfRuns) {
+recordTsvTotal(name, results, loopSize, numberOfRuns) {
   var averageScore = results.fold(0, (prev, element) => prev + element) /
     numberOfRuns;
 
-  var csv =
-    '${name}, '
-    '${averageScore.toStringAsPrecision(4)}, '
-    '${loopSize}, '
+  var tsv =
+    '${name}\t'
+    '${averageScore.toStringAsPrecision(4)}\t'
+    '${loopSize}\t'
     '${(averageScore/loopSize).toStringAsPrecision(4)}';
 
-  print(csv);
-  var file = new File('totals.csv');
+  print(tsv);
+  var file = new File(LOOP_RESULTS_FILE);
   file.openSync(mode: FileMode.APPEND)
-    ..writeStringSync('$csv\n')
+    ..writeStringSync('$tsv\n')
     ..closeSync();
 }

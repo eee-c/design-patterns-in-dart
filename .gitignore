@@ -3,3 +3,4 @@ build
 *.dart.js*
 *.dart.precompiled.js
 visitor/*.csv
+tmp
