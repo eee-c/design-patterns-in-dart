@@ -1,7 +1,5 @@
 library score_emitter;
 
-import 'dart:io';
-
 import 'package:benchmark_harness/benchmark_harness.dart';
 
 const LOOP_RESULTS_FILE = 'tmp/benchmark_loop_runs.tsv';
@@ -36,8 +34,4 @@ recordTsvTotal(name, results, loopSize, numberOfRuns) {
     '${(averageScore/loopSize).toStringAsPrecision(4)}';
 
   print(tsv);
-  var file = new File(LOOP_RESULTS_FILE);
-  file.openSync(mode: FileMode.APPEND)
-    ..writeStringSync('$tsv\n')
-    ..closeSync();
 }
