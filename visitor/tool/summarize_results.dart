@@ -2,8 +2,6 @@
 
 import 'dart:io';
 
-import 'src/score_emitters.dart';
-
 main() {
   List<Map> totals = _readTotals();
   var loopSizes = totals.map((r)=> r['loopSize']).toSet();
@@ -13,7 +11,7 @@ main() {
   var header = ['Loop_Size']..addAll(
       implementations.map((i)=> i.replaceAll(' ', '_'))
     );
-  _saveRow(header);
+  _recordTsvRecord(header);
 
   loopSizes.forEach((loopSize) {
     var records = totals.where((r)=> r['loopSize'] == loopSize);
@@ -23,28 +21,27 @@ main() {
       var rec = records.firstWhere((r)=> r['name'] == implementation);
       row.add(rec["averageScore"]);
     });
-    _saveRow(row);
+    _recordTsvRecord(row);
   });
 }
 
-_saveRow(row) {
-  var file = new File(SUMMARY_FILE);
-  file.openSync(mode: FileMode.APPEND)
-    ..writeStringSync('${row.join("\t")}\n')
-    ..closeSync();
+void _recordTsvRecord(row) {
+  print(row.join("\t"));
 }
 
 _readTotals() {
-  var file = new File(LOOP_RESULTS_FILE);
-  var lines = file.readAsLinesSync();
+  var lines = [];
 
-  return lines.map((line){
+  var line;
+  while ((line = stdin.readLineSync()) != null) {
     var fields = line.split('\t');
-    return {
+    lines.add({
       'name': fields[0],
       'score': fields[1],
       'loopSize': fields[2],
       'averageScore': fields[3]
-    };
-  }).toList();
+    });
+  }
+
+  return lines;
 }

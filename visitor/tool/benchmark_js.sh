@@ -26,15 +26,18 @@ echo $wrapper >> tool/benchmark_visitor_traverse.dart.js
 echo "Running benchmarks..."
 for X in 10 100 1000 10000 100000
 do
-    node ./tool/benchmark.dart.js --loop-size=$X | tee -a $RESULTS_FILE
-    node ./tool/benchmark_single_dispatch_iteration.dart.js --loop-size=$X | tee -a $RESULTS_FILE
-    node ./tool/benchmark_visitor_traverse.dart.js --loop-size=$X | tee -a $RESULTS_FILE
+    node ./tool/benchmark.dart.js --loop-size=$X \
+        | tee -a $RESULTS_FILE
+    node ./tool/benchmark_single_dispatch_iteration.dart.js --loop-size=$X \
+        | tee -a $RESULTS_FILE
+    node ./tool/benchmark_visitor_traverse.dart.js --loop-size=$X \
+        | tee -a $RESULTS_FILE
 done
 echo "Done. Results stored in $RESULTS_FILE."
 
 # # Summarize results
 echo "Building summary..."
-./tool/summarize_results.dart
+./tool/summarize_results.dart < $RESULTS_FILE > $SUMMARY_FILE
 echo "Done. Results stored in $SUMMARY_FILE."
 
 # Visualization ready

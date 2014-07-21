@@ -12,15 +12,18 @@ cat /dev/null > $SUMMARY_FILE
 echo "Running benchmarks..."
 for X in 10 100 1000 10000 100000
 do
-    ./tool/benchmark.dart --loop-size=$X | tee -a $RESULTS_FILE
-    ./tool/benchmark_single_dispatch_iteration.dart --loop-size=$X | tee -a $RESULTS_FILE
-    ./tool/benchmark_visitor_traverse.dart --loop-size=$X | tee -a $RESULTS_FILE
+    ./tool/benchmark.dart --loop-size=$X \
+        | tee -a $RESULTS_FILE
+    ./tool/benchmark_single_dispatch_iteration.dart --loop-size=$X \
+        | tee -a $RESULTS_FILE
+    ./tool/benchmark_visitor_traverse.dart --loop-size=$X \
+        | tee -a $RESULTS_FILE
 done
 echo "Done. Results stored in $RESULTS_FILE."
 
 # Summarize results
 echo "Building summary..."
-./tool/summarize_results.dart
+./tool/summarize_results.dart < $RESULTS_FILE > $SUMMARY_FILE
 echo "Done. Results stored in $SUMMARY_FILE."
 
 # Visualization ready
