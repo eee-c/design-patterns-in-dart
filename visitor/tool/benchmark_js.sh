@@ -3,7 +3,7 @@
 RESULTS_FILE=tmp/benchmark_loop_runs.tsv
 SUMMARY_FILE=tmp/benchmark_summary.tsv
 
-# # Initialize artifact directory
+# Initialize artifact directory
 mkdir -p tmp
 cat /dev/null > $RESULTS_FILE
 cat /dev/null > $SUMMARY_FILE
@@ -35,7 +35,7 @@ do
 done
 echo "Done. Results stored in $RESULTS_FILE."
 
-# # Summarize results
+# Summarize results
 echo "Building summary..."
 ./tool/summarize_results.dart < $RESULTS_FILE > $SUMMARY_FILE
 echo "Done. Results stored in $SUMMARY_FILE."
