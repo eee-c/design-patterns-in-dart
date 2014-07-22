@@ -2,6 +2,7 @@
 
 RESULTS_FILE=tmp/benchmark_loop_runs.tsv
 SUMMARY_FILE=tmp/benchmark_summary.tsv
+LOOP_SIZES="10 100 1000 10000 100000"
 
 # Initialize artifact directory
 mkdir -p tmp
@@ -24,7 +25,7 @@ echo $wrapper >> tool/benchmark_visitor_traverse.dart.js
 
 # Individual benchmark runs of different implementations
 echo "Running benchmarks..."
-for X in 10 100 1000 10000 100000
+for X in $LOOP_SIZES
 do
     node ./tool/benchmark.dart.js --loop-size=$X \
         | tee -a $RESULTS_FILE
