@@ -1,8 +1,10 @@
 #!/bin/sh
 
+gnuplot=packages/dpid_benchmarking/benchmark_summary.gnuplot
+
 if [ "$2" != "" ]
 then
-    gnuplot -e "filename='$1'; image='$2'" tool/benchmark_summary.gnuplot
+    gnuplot -e "filename='$1'; image='$2'" $gnuplot
 
 elif [ "$1" = "-h" -o "$1" = "--help" ]
 then
@@ -10,9 +12,9 @@ then
 
 elif [ "$1" != "" ]
 then
-    gnuplot -e "filename='$1'" tool/benchmark_summary.gnuplot
+    gnuplot -e "filename='$1'" $gnuplot
 
 else
-    gnuplot tool/benchmark_summary.gnuplot
+    gnuplot $gnuplot
 
 fi

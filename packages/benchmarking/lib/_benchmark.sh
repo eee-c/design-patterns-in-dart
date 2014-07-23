@@ -20,7 +20,6 @@ _run_benchmarks () {
     all_done
 }
 
-
 parse_options () {
   if [ "$1" = "-js" -o "$1" = "--javascript" ]
   then
@@ -81,7 +80,7 @@ run_benchmarks_js () {
 # Summarize results
 summarize () {
     echo "Building summary..."
-    ./tool/summarize_results.dart < $results_file > $summary_file
+    ./packages/dpid_benchmarking/summarize_results.dart < $results_file > $summary_file
     echo "Done. Results stored in $summary_file."
 }
 
