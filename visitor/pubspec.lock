@@ -4,7 +4,7 @@ packages:
   args:
     description: args
     source: hosted
-    version: "0.11.0+1"
+    version: "0.12.0"
   benchmark_harness:
     description: benchmark_harness
     source: hosted
@@ -17,3 +17,9 @@ packages:
     description: collection
     source: hosted
     version: "0.9.4"
+  dpid_benchmarking:
+    description:
+      path: "../packages/benchmarking"
+      relative: true
+    source: path
+    version: "0.0.0"

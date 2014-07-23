@@ -1,8 +1,8 @@
 #!/usr/bin/env dart
 
 import 'package:benchmark_harness/benchmark_harness.dart';
-import 'src/config.dart';
-import 'src/score_emitters.dart';
+import 'package:dpid_benchmarking/config.dart';
+import 'package:dpid_benchmarking/score_emitters.dart';
 
 import 'package:visitor_code/alt/visitor_traverse/visitor.dart';
 

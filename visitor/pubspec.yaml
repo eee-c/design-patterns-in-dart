@@ -2,3 +2,5 @@ name: visitor_code
 dev_dependencies:
   args: any
   benchmark_harness: any
+  dpid_benchmarking:
+    path: ../packages/benchmarking
