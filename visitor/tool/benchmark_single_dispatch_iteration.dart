@@ -19,14 +19,12 @@ main (List<String> args) {
 
   _setup();
   for (var i=0; i<=numberOfRuns; i++) {
-    double score = NodesSingleBenchmark.main();
+    double score = PatternBenchmark.main();
     if (i == 0) continue; // Ignore first run (extra warm up)
     results[i-1] = score;
   }
-  // results.forEach((s){ recordTsvRecord(NAME, s, loopSize); });
   recordTsvTotal(NAME, results, loopSize, numberOfRuns);
 }
-
 
 _setup(){
   visitor = new PricingVisitor();
@@ -40,10 +38,10 @@ _setup(){
   }
 }
 
-class NodesSingleBenchmark extends BenchmarkBase {
-  const NodesSingleBenchmark(): super(NAME);
+class PatternBenchmark extends BenchmarkBase {
+  const PatternBenchmark(): super(NAME);
 
-  static double main()=> new NodesSingleBenchmark().measure();
+  static double main()=> new PatternBenchmark().measure();
 
   void run() {
     for (var i=0; i<loopSize; i++) {

@@ -87,5 +87,5 @@ summarize () {
 # Visualization ready
 all_done () {
     echo ""
-    echo "To view in gnuplot, run: tool/visualize.sh ${summary_file}"
+    echo "To view in gnuplot, run: packages/dpid_benchmarking/visualize.sh ${summary_file}"
 }
