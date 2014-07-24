@@ -1,12 +1,18 @@
 #!/usr/bin/env dart
 
-import 'package:benchmark_harness/benchmark_harness.dart';
-import 'package:dpid_benchmarking/config.dart';
-import 'package:dpid_benchmarking/score_emitters.dart';
+import 'package:dpid_benchmarking/pattern_benchmark.dart';
 
 import 'package:visitor_code/visitor.dart';
 
-const String NAME = "Classic Visitor Pattern";
+main(List<String> args) {
+  BenchmarkRunner.main(
+    args,
+    "Classic Visitor Pattern",
+    _setup,
+    _run
+  );
+}
+
 
 var visitor, nodes;
 
@@ -27,30 +33,4 @@ _run(loopSize) {
     visitor.totalPrice = 0.0;
     nodes.accept(visitor);
   }
-}
-
-
-int loopSize, numberOfRuns;
-
-main (List<String> args) {
-  var conf = new Config(args);
-  loopSize = conf.loopSize;
-  numberOfRuns = conf.numberOfRuns;
-  List<double> results = new List(numberOfRuns);
-
-  _setup();
-  for (var i=0; i<=numberOfRuns; i++) {
-    double score = PatternBenchmark.main();
-    if (i == 0) continue; // Ignore first run (extra warm up)
-    results[i-1] = score;
-  }
-  recordTsvTotal(NAME, results, loopSize, numberOfRuns);
-}
-
-class PatternBenchmark extends BenchmarkBase {
-  const PatternBenchmark(): super(NAME);
-
-  static double main()=> new PatternBenchmark().measure();
-
-  void run() { _run(loopSize); }
 }
