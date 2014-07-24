@@ -4,33 +4,20 @@ import 'package:dpid_benchmarking/pattern_benchmark.dart';
 
 import 'package:visitor_code/visitor.dart';
 
+import '_setup.dart' as Setup;
+
 main(List<String> args) {
+  Setup.visitorMaker = ()=> new PricingVisitor();
+  Setup.inventoryCollectionMaker = (items) => new InventoryCollection(items);
+  Setup.mobile = mobile;
+  Setup.tablet = tablet;
+  Setup.laptop = laptop;
+  Setup.app = app;
+
   BenchmarkRunner.main(
     args,
     "Classic Visitor Pattern",
-    _setup,
-    _run
+    Setup.setup,
+    Setup.run
   );
-}
-
-
-var visitor, nodes;
-
-_setup() {
-  visitor = new PricingVisitor();
-
-  nodes = new InventoryCollection([mobile(), tablet(), laptop()]);
-  for (var i=0; i<1000; i++) {
-    nodes.stuff[0].apps.add(app('Mobile App $i', price: i));
-  }
-  for (var i=0; i<100; i++) {
-    nodes.stuff[1].apps.add(app('Tablet App $i', price: i));
-  }
-}
-
-_run(loopSize) {
-  for (var i=0; i<loopSize; i++) {
-    visitor.totalPrice = 0.0;
-    nodes.accept(visitor);
-  }
 }
