@@ -1,7 +1,7 @@
 import 'package:benchmark_harness/benchmark_harness.dart';
-import 'package:factory_method_code/subclass.dart' as Subclass;
-import 'package:factory_method_code/map_of_factories.dart' as MapOfFactories;
-import 'package:factory_method_code/mirrors.dart' as Mirrors;
+import 'package:factory_method_code/factory_method.dart' as Subclass;
+import 'package:factory_method_code/alt/map_of_factories/factory_method.dart' as MapOfFactories;
+import 'package:factory_method_code/alt/mirrors/factory_method.dart' as Mirrors;
 
 class FactoryMethodSubclassBenchmark extends BenchmarkBase {
   const FactoryMethodSubclassBenchmark() : super("Factory Method — Subclass");

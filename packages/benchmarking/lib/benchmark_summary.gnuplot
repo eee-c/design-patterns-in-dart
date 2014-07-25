@@ -10,7 +10,10 @@ set xtics rotate out
 set key tmargin
 set xlabel "Loop Size"
 set ylabel "µs per run"
-set yrange [0:]
+
+if (!exists("log")) set yrange [0:]
+if ( exists("log")) set logscale y
+
 plot for [COL=2:4] filename using COL:xticlabels(1) title columnheader
 
 if ( exists("image")) print "Image saved to ", image

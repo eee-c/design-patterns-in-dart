@@ -2,4 +2,6 @@ name: factory_method_code
 dependencies:
   browser: any
 dev_dependencies:
+  dpid_benchmarking:
+    path: ../packages/benchmarking
   benchmark_harness: any

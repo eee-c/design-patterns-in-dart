@@ -1,4 +1,4 @@
 name: dpid_benchmarking
-dev_dependencies:
+dependencies:
   args: any
   benchmark_harness: any
