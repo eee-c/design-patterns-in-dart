@@ -1,16 +1,16 @@
 part of reactor;
 
-class StdinDispatcher {
+class InitiationDispatcher {
   var events = {};
 
-  static final StdinDispatcher _dispatcher =
-    new StdinDispatcher._internal();
+  static final InitiationDispatcher _dispatcher =
+    new InitiationDispatcher._internal();
 
-  factory StdinDispatcher() {
+  factory InitiationDispatcher() {
     return _dispatcher;
   }
 
-  StdinDispatcher._internal() {
+  InitiationDispatcher._internal() {
     stdin.echoMode = false;
   }
 

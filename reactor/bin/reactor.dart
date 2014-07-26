@@ -8,6 +8,6 @@ main() {
 
   // Reactor loop...
   for(;;) {
-    new StdinDispatcher().handleEvents();
+    new InitiationDispatcher().handleEvents();
   }
 }
