@@ -2,5 +2,5 @@ library reactor;
 
 import 'dart:io';
 
-part 'handle_key.dart';
-part 'initiation_dispatcher.dart';
+part 'src/handle_key.dart';
+part 'src/initiation_dispatcher.dart';
