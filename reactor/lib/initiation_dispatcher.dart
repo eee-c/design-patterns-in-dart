@@ -1,4 +1,4 @@
-import 'dart:io';
+part of reactor;
 
 class InitiationDispatcher {
   var events = {};
