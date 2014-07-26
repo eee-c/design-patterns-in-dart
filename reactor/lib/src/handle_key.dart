@@ -2,7 +2,7 @@ part of reactor;
 
 class HandleKey {
   HandleKey(){
-    new InitiationDispatcher().registerHandler(this, 'key');
+    new StdinDispatcher().registerHandler(this, 'key');
   }
 
   handleEvent(eventType) {

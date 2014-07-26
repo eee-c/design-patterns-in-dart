@@ -1,16 +1,16 @@
 part of reactor;
 
-class InitiationDispatcher {
+class StdinDispatcher {
   var events = {};
 
-  static final InitiationDispatcher _dispatcher =
-    new InitiationDispatcher._internal();
+  static final StdinDispatcher _dispatcher =
+    new StdinDispatcher._internal();
 
-  factory InitiationDispatcher() {
+  factory StdinDispatcher() {
     return _dispatcher;
   }
 
-  InitiationDispatcher._internal() {
+  StdinDispatcher._internal() {
     stdin.echoMode = false;
   }
 
@@ -23,7 +23,7 @@ class InitiationDispatcher {
 
   handleEvents([int timeout=0]) {
     var line = stdin.readLineSync();
-    print('[handleEvents] $line');
+    print('NOTIFIED! I\'m blocking now for reactor events...');
     events['key'].forEach((h)=> h.handleEvent('key'));
   }
 }
