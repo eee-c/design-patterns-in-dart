@@ -22,8 +22,9 @@ class InitiationDispatcher {
   removeHandler(eventHandler, eventType) { }
 
   handleEvents([int timeout=0]) {
-    var line = stdin.readLineSync();
-    print('NOTIFIED! I\'m blocking now for reactor events...');
-    events['key'].forEach((h)=> h.handleEvent('key'));
+    var event = select().fetch();
+    if (event == null) return;
+    print(event.type);
+    events[event.type].forEach((h)=> h.handleEvent(event));
   }
 }
