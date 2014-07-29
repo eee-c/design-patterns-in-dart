@@ -1,45 +1,54 @@
 #!/usr/bin/env dart
 
 import 'dart:async';
+import 'dart:isolate';
 import 'package:reactor_code/reactor.dart';
 
 main() {
-  _startRandomMessageSender();
+  // Spawn the message sending isolate and set its receive port as the source of
+  // the fake select() messages
+  var res = new ReceivePort();
+  Select.source = res;
+  Isolate.spawn(messageSender, res.sendPort);
 
   // Create (and register in constructor) event handler
   new WordAcceptor();
 
-  // Reactor loop...
-  for(;;) {
-    new InitiationDispatcher().handleEvents();
-  }
+  // Reactor “loop” (handleEvent is recursive)
+  new InitiationDispatcher().handleEvents();
+
+  // NOTREACHED
+  return 0;
 }
 
-void _startRandomMessageSender() {
+void messageSender(SendPort port) {
+  var wordSender = new ReceivePort();
+  port.send({'type': 'word_connect', 'value': wordSender.sendPort});
+  wordSender.
+    first.
+    then((SendPort s1) {
+      s1.send({'type': 'word', 'value': 'howdy'});
+      s1.send({'type': 'word', 'value': 'chris'});
+      port.send({'type': 'word'});
 
-      var words = ['one', 'two', 'three'];
-      var controller = new StreamController();
-      controller.add('one');
-      var handle = new Handle('word', controller.stream);
-      select().add(new SystemEvent('word', handle.number));
-      print('yo');
-      controller.add('one');
-
-
-  new Timer(
-    new Duration(seconds: 1),
-    () {
-      print('Time!!!');
-
-
-      print('one');
-      controller.add('one');
-      print('two');
-      controller.add('two');
-      print('three');
-      controller.add('three');
+      new Timer(
+        new Duration(seconds: 2),
+        (){
+          s1.send({'type': 'word', 'value': 'delayed'});
+          s1.send({'type': 'word', 'value': 'howdy'});
+          s1.send({'type': 'word', 'value': 'chris'});
+          port.send({'type': 'word'});
 
 
-    }
-  );
+          new Timer(
+            new Duration(seconds: 2),
+            (){
+              port.send({'type': 'word_close'});
+              wordSender.close();
+            }
+          );
+
+        }
+      );
+    });
 }

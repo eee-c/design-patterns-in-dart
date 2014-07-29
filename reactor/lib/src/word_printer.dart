@@ -2,29 +2,56 @@ part of reactor;
 
 class WordAcceptor implements EventHandler {
   WordAcceptor() {
-    new InitiationDispatcher().registerHandler(this, 'word');
+    new InitiationDispatcher().registerHandler(this, 'word_connect');
+  }
+
+  void handleEvent(connection) {
+    if (connection.type != 'word_connect') return;
+    new WordPrinter(connection.value);
+  }
+}
+
+class WordPrinter implements EventHandler {
+  SendPort sendPort;
+  ReceivePort receivePort;
+
+  StreamSubscription handle;
+
+  final timeout = const Duration(milliseconds: 2);
+
+  WordPrinter(this.sendPort) {
+    new InitiationDispatcher()
+      ..registerHandler(this, 'word')
+      ..registerHandler(this, 'word_close');
+
+    receivePort = new ReceivePort();
+    sendPort.send(receivePort.sendPort);
+
+    handle = receivePort.
+      asBroadcastStream().
+      timeout(timeout, onTimeout: (_){ handle.pause(); }).
+      listen(write)
+      ..pause();
   }
 
   void handleEvent(event) {
-    if (event.type != 'word') return;
-    new WordPrinter(event.handleId);
-  }
-  get handle;
-}
-
-class WordPrinter  {
-  int handleId;
-  Handle handle;
-
-  WordPrinter(this.handleId) {
-    handle = Handle.lookup[handleId];
-    read();
+    if (event.type == 'word') {
+      read();
+    }
+    else if (event.type == 'word_close') {
+      handle.cancel();
+      receivePort.close();
+      new InitiationDispatcher()
+        ..removeHandler(this, 'word')
+        ..removeHandler(this, 'word_close');
+    }
   }
 
   void read() {
-    print(handle.stream);
-    handle.stream.listen((word){
-      print('[WordPrinter.read] $word');
-    });
+    handle.resume();
+  }
+
+  void write(word) {
+    print('[WordPrinter.read] $word');
   }
 }

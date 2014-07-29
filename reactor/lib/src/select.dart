@@ -5,10 +5,19 @@ class Select {
   factory Select()=> _select;
   Select._internal();
 
-  Queue<SystemEvent> queue = new Queue();
+  ReceivePort _from;
 
-  void add(String type) { queue.addLast(type); }
-  SystemEvent fetch() {
+  static set source(ReceivePort r) {
+    _select._from = r.asBroadcastStream();
+    r.listen((m) {
+      _select.add(new MessageEvent(m['type'], m['value']));
+    });
+  }
+
+  Queue<MessageEvent> queue = new Queue();
+
+  void add(MessageEvent e) { queue.addLast(e); }
+  MessageEvent fetch() {
     if (queue.isEmpty) return null;
     return queue.removeFirst();
   }
@@ -16,21 +25,8 @@ class Select {
 
 select()=> new Select();
 
-class SystemEvent {
-  int handleId;
+class MessageEvent {
   String type;
-  SystemEvent(this.type, this.handleId);
-}
-
-class Handle {
-  static int nextNumber = 1;
-  static Map<int,Handle> lookup = {};
-
-  int number;
-  String type;
-  var stream;
-  Handle(this.type, this.stream){
-    number = Handle.nextNumber++;
-    Handle.lookup[number] = this;
-  }
+  Object value;
+  MessageEvent(this.type, [this.value]);
 }
