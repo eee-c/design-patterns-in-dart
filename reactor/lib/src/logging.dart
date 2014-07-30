@@ -6,8 +6,8 @@ class LoggingAcceptor implements EventHandler {
   }
 
   void handleEvent(connection) {
-    if (connection.type != 'log_connect') return;
-    new LoggingHandler(connection.value);
+    if (connection['type'] != 'log_connect') return;
+    new LoggingHandler(connection['value']);
   }
 }
 
@@ -35,10 +35,10 @@ class LoggingHandler implements EventHandler {
   }
 
   void handleEvent(event) {
-    if (event.type == 'log') {
+    if (event['type'] == 'log') {
       read();
     }
-    else if (event.type == 'log_close') {
+    else if (event['type'] == 'log_close') {
       handle.cancel();
       _in.close();
       new InitiationDispatcher()

@@ -22,13 +22,12 @@ class InitiationDispatcher implements Dispatcher {
   removeHandler(eventHandler, eventType) { }
 
   handleEvents([int timeout=0]) {
-    var event = select().fetch();
-    if (event == null) {
-      Timer.run((){this.handleEvents();});
-      return;
-    }
-    print('[handleEvents] ${event.type}');
-    events[event.type].forEach((h)=> h.handleEvent(event));
-    this.handleEvents();
+    connect().
+      stream.
+      listen((event){
+        print('[handleEvents] ${event["type"]}');
+        events[event['type']].forEach((h)=> h.handleEvent(event));
+      });
+    new Timer(new Duration(seconds: 20), (){});
   }
 }

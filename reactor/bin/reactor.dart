@@ -7,15 +7,16 @@ import 'package:reactor_code/reactor.dart';
 // sendPort => stream
 
 main() {
-  // Start the message sender and set its connection as the source of
-  // the fake select() messages
-  messageSender(connect());
-
   // Create (and register in constructor) event handler
   new LoggingAcceptor();
 
   // Reactor “loop” (handleEvent is recursive)
   new InitiationDispatcher().handleEvents();
+
+
+  // Start the message sender and set its connection as the source of
+  // the fake select() messages
+  messageSender(connect());
 
   // NOTREACHED
   return 0;
