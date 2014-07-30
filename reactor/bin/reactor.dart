@@ -1,13 +1,15 @@
 #!/usr/bin/env dart
 
 import 'dart:async';
-import 'dart:isolate';
 import 'package:reactor_code/reactor.dart';
 
+// ReceivePort => StreamController
+// sendPort => stream
+
 main() {
-  // Spawn the message sending isolate and set its receive port as the source of
+  // Start the message sender and set its connection as the source of
   // the fake select() messages
-  Isolate.spawn(messageSender, connection());
+  messageSender(connect());
 
   // Create (and register in constructor) event handler
   new LoggingAcceptor();
@@ -19,33 +21,32 @@ main() {
   return 0;
 }
 
-void messageSender(SendPort server) {
-  var logClient = new ReceivePort();
-  server.send({'type': 'log_connect', 'value': logClient.sendPort});
+void messageSender(StreamController server) {
+  var logClient = new StreamController();
+  server.add({'type': 'log_connect', 'value': logClient});
   logClient.
+    stream.
     first.
-    then((SendPort s1) {
-      s1.send({'type': 'log', 'value': 'howdy'});
-      s1.send({'type': 'log', 'value': 'chris'});
-      server.send({'type': 'log'});
+    then((StreamController s1) {
+      s1.add({'type': 'log', 'value': 'howdy'});
+      s1.add({'type': 'log', 'value': 'chris'});
+      server.add({'type': 'log'});
 
       new Timer(
         new Duration(seconds: 2),
         (){
-          s1.send({'type': 'log', 'value': 'delayed'});
-          s1.send({'type': 'log', 'value': 'howdy'});
-          s1.send({'type': 'log', 'value': 'chris'});
-          server.send({'type': 'log'});
-
+          s1.add({'type': 'log', 'value': 'delayed'});
+          s1.add({'type': 'log', 'value': 'howdy'});
+          s1.add({'type': 'log', 'value': 'chris'});
+          server.add({'type': 'log'});
 
           new Timer(
             new Duration(seconds: 2),
             (){
-              server.send({'type': 'log_close'});
+              server.add({'type': 'log_close'});
               logClient.close();
             }
           );
-
         }
       );
     });

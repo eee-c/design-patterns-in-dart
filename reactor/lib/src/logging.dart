@@ -12,23 +12,23 @@ class LoggingAcceptor implements EventHandler {
 }
 
 class LoggingHandler implements EventHandler {
-  SendPort sendPort;
-  ReceivePort receivePort;
+  StreamController _out;
+  StreamController _in;
 
   StreamSubscription handle;
 
   final timeout = const Duration(milliseconds: 2);
 
-  LoggingHandler(this.sendPort) {
+  LoggingHandler(StreamController this._out) {
     new InitiationDispatcher()
       ..registerHandler(this, 'log')
       ..registerHandler(this, 'log_close');
 
-    receivePort = new ReceivePort();
-    sendPort.send(receivePort.sendPort);
+    _in = new StreamController.broadcast();
+    _out.add(_in);
 
-    handle = receivePort.
-      asBroadcastStream().
+    handle = _in.
+      stream.
       timeout(timeout, onTimeout: (_){ handle.pause(); }).
       listen(write)
       ..pause();
@@ -40,7 +40,7 @@ class LoggingHandler implements EventHandler {
     }
     else if (event.type == 'log_close') {
       handle.cancel();
-      receivePort.close();
+      _in.close();
       new InitiationDispatcher()
         ..removeHandler(this, 'log')
         ..removeHandler(this, 'log_close');
