@@ -1,18 +1,18 @@
 part of reactor;
 
 class Select {
+  ReceivePort _in;
+
   static final Select _select = new Select._internal();
   factory Select()=> _select;
-  Select._internal();
-
-  ReceivePort _from;
-
-  static set source(ReceivePort r) {
-    _select._from = r.asBroadcastStream();
-    r.listen((m) {
-      _select.add(new MessageEvent(m['type'], m['value']));
+  Select._internal() {
+    _in = new ReceivePort();
+    _in.listen((m) {
+      add(new MessageEvent(m['type'], m['value']));
     });
   }
+
+  SendPort get connection => _in.sendPort;
 
   Queue<MessageEvent> queue = new Queue();
 
@@ -24,6 +24,7 @@ class Select {
 }
 
 select()=> new Select();
+connection()=> new Select().connection;
 
 class MessageEvent {
   String type;

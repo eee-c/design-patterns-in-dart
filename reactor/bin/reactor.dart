@@ -7,9 +7,7 @@ import 'package:reactor_code/reactor.dart';
 main() {
   // Spawn the message sending isolate and set its receive port as the source of
   // the fake select() messages
-  var res = new ReceivePort();
-  Select.source = res;
-  Isolate.spawn(messageSender, res.sendPort);
+  Isolate.spawn(messageSender, connection());
 
   // Create (and register in constructor) event handler
   new LoggingAcceptor();
