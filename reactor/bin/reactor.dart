@@ -12,7 +12,7 @@ main() {
   Isolate.spawn(messageSender, res.sendPort);
 
   // Create (and register in constructor) event handler
-  new WordAcceptor();
+  new LoggingAcceptor();
 
   // Reactor “loop” (handleEvent is recursive)
   new InitiationDispatcher().handleEvents();
@@ -21,30 +21,30 @@ main() {
   return 0;
 }
 
-void messageSender(SendPort port) {
-  var wordSender = new ReceivePort();
-  port.send({'type': 'word_connect', 'value': wordSender.sendPort});
-  wordSender.
+void messageSender(SendPort server) {
+  var logClient = new ReceivePort();
+  server.send({'type': 'log_connect', 'value': logClient.sendPort});
+  logClient.
     first.
     then((SendPort s1) {
-      s1.send({'type': 'word', 'value': 'howdy'});
-      s1.send({'type': 'word', 'value': 'chris'});
-      port.send({'type': 'word'});
+      s1.send({'type': 'log', 'value': 'howdy'});
+      s1.send({'type': 'log', 'value': 'chris'});
+      server.send({'type': 'log'});
 
       new Timer(
         new Duration(seconds: 2),
         (){
-          s1.send({'type': 'word', 'value': 'delayed'});
-          s1.send({'type': 'word', 'value': 'howdy'});
-          s1.send({'type': 'word', 'value': 'chris'});
-          port.send({'type': 'word'});
+          s1.send({'type': 'log', 'value': 'delayed'});
+          s1.send({'type': 'log', 'value': 'howdy'});
+          s1.send({'type': 'log', 'value': 'chris'});
+          server.send({'type': 'log'});
 
 
           new Timer(
             new Duration(seconds: 2),
             (){
-              port.send({'type': 'word_close'});
-              wordSender.close();
+              server.send({'type': 'log_close'});
+              logClient.close();
             }
           );
 

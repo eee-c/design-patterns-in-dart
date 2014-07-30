@@ -1,17 +1,17 @@
 part of reactor;
 
-class WordAcceptor implements EventHandler {
-  WordAcceptor() {
-    new InitiationDispatcher().registerHandler(this, 'word_connect');
+class LoggingAcceptor implements EventHandler {
+  LoggingAcceptor() {
+    new InitiationDispatcher().registerHandler(this, 'log_connect');
   }
 
   void handleEvent(connection) {
-    if (connection.type != 'word_connect') return;
-    new WordPrinter(connection.value);
+    if (connection.type != 'log_connect') return;
+    new LoggingHandler(connection.value);
   }
 }
 
-class WordPrinter implements EventHandler {
+class LoggingHandler implements EventHandler {
   SendPort sendPort;
   ReceivePort receivePort;
 
@@ -19,10 +19,10 @@ class WordPrinter implements EventHandler {
 
   final timeout = const Duration(milliseconds: 2);
 
-  WordPrinter(this.sendPort) {
+  LoggingHandler(this.sendPort) {
     new InitiationDispatcher()
-      ..registerHandler(this, 'word')
-      ..registerHandler(this, 'word_close');
+      ..registerHandler(this, 'log')
+      ..registerHandler(this, 'log_close');
 
     receivePort = new ReceivePort();
     sendPort.send(receivePort.sendPort);
@@ -35,15 +35,15 @@ class WordPrinter implements EventHandler {
   }
 
   void handleEvent(event) {
-    if (event.type == 'word') {
+    if (event.type == 'log') {
       read();
     }
-    else if (event.type == 'word_close') {
+    else if (event.type == 'log_close') {
       handle.cancel();
       receivePort.close();
       new InitiationDispatcher()
-        ..removeHandler(this, 'word')
-        ..removeHandler(this, 'word_close');
+        ..removeHandler(this, 'log')
+        ..removeHandler(this, 'log_close');
     }
   }
 
@@ -51,7 +51,7 @@ class WordPrinter implements EventHandler {
     handle.resume();
   }
 
-  void write(word) {
-    print('[WordPrinter.read] $word');
+  void write(message) {
+    print('[LoggingHandler.write] $message');
   }
 }
