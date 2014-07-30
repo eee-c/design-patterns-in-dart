@@ -9,4 +9,4 @@ part 'src/interfaces.dart';
 part 'src/initiation_dispatcher.dart';
 part 'src/handle_key.dart';
 part 'src/select.dart';
-part 'src/logging_client.dart';
+part 'src/logging.dart';
