@@ -23,7 +23,7 @@ class Select {
   }
 }
 
-select()=> new Select();
+select()=> new Select().fetch();
 connection()=> new Select().connection;
 
 class MessageEvent {

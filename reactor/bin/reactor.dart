@@ -4,6 +4,8 @@ import 'dart:async';
 import 'dart:isolate';
 import 'package:reactor_code/reactor.dart';
 
+final timeout = const Duration(milliseconds: 10);
+
 main() {
   // Spawn the message sending isolate and set its receive port as the source of
   // the fake select() messages
@@ -12,11 +14,12 @@ main() {
   // Create (and register in constructor) event handler
   new LoggingAcceptor();
 
-  // Reactor “loop” (handleEvent is recursive)
-  new InitiationDispatcher().handleEvents();
-
-  // NOTREACHED
-  return 0;
+  // Reactor “loop”
+  loop() {
+    new Timer(timeout, loop);
+    new InitiationDispatcher().handleEvents();
+  }
+  loop();
 }
 
 void messageSender(SendPort server) {
