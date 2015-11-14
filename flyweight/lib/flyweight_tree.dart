@@ -2,43 +2,41 @@ library flyweight_tree;
 
 class Tree {
   int count = 0;
-  var _lampFactory;
-
-  Tree() {
-    _lampFactory = new LampFactory();
-  }
 
   void hangLamp(color, branchNumber) {
     new TreeBranch(branchNumber)
-      ..hang(_lampFactory.findLamp(color));
+      ..hang(new Lamp(color));
 
     count++;
   }
 
   String get report => "Added ${count} lamps.\n"
-      "Used ${_lampFactory.totalNumberOfLampsMade} kinds of lamps.";
+      "Used ${Lamp.totalCount} kinds of lamps.\n"
+      "On ${TreeBranch.totalCount} branches.";
 }
 
 class TreeBranch {
-  int number;
+  static Map _cache = {};
+  static int get totalCount => _cache.length;
 
-  TreeBranch(this.number);
+  factory TreeBranch(number) =>
+      _cache.putIfAbsent(number, () => new TreeBranch._(number));
+
+  int number;
+  TreeBranch._(this.number);
 
   void hang(lamp) {
     print("  Hangs ${lamp.color} on branch #${number}.");
   }
 }
 
-class LampFactory {
-  var cache = {};
-  Lamp findLamp(color) {
-    return cache.putIfAbsent(color, () => new Lamp(color));
-  }
-
-  int get totalNumberOfLampsMade => cache.length;
-}
-
 class Lamp {
+  static Map _cache = {};
+  static int get totalCount => _cache.length;
+
+  factory Lamp(color) =>
+      _cache.putIfAbsent(color, () => new Lamp._(color));
+
   String color;
-  Lamp(this.color);
+  Lamp._(this.color);
 }
