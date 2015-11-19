@@ -26,6 +26,8 @@ import 'package:flyweight_code/coffee_shop.dart';
 // CoffeeShop.takeOrder("Espresso", 121)
 
 main() {
+  // print(CoffeeFlavor.registered);
+
   var shop = new CoffeeShop()
     ..order('Cappuccino', 'large', who: 'Fred', fooFoo: 'Extra Shot')
     ..order('Espresso',   'small', who: 'Bob')
@@ -34,6 +36,7 @@ main() {
     ..order('Coffee',     'small')
     ..order('Coffee',     'medium', who: 'Chris');
 
+  // print(CoffeeFlavor.registered);
   shop.serve();
   print('-----');
   print(shop.report);
