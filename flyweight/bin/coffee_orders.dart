@@ -25,6 +25,11 @@ import 'package:flyweight_code/coffee_shop.dart';
 // CoffeeShop.takeOrder("Cappuccino", 121)
 // CoffeeShop.takeOrder("Espresso", 121)
 
+class Mochachino implements CoffeeFlavor {
+  String get name => "Mochachino";
+  double get profitPerOunce => 0.3;
+}
+
 main() {
   // print(CoffeeFlavor.registered);
 
@@ -34,7 +39,8 @@ main() {
     ..order('Frappe',     'large', who: 'Alice')
     ..order('Frappe',     'large', who: 'Elsa', fooFoo: '2 Percent Foam')
     ..order('Coffee',     'small')
-    ..order('Coffee',     'medium', who: 'Chris');
+    ..order('Coffee',     'medium', who: 'Chris')
+    ..order('Mochachino', 'large', who: 'Joy');
 
   // print(CoffeeFlavor.registered);
   shop.serve();

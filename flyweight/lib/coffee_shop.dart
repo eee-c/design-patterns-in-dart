@@ -48,13 +48,31 @@ class CoffeeFlavor {
   static Map _cache = {};
   static int get totalCount => _cache.length;
 
-  factory CoffeeFlavor(name) =>
-    _cache.putIfAbsent(name, (){
-      var m = currentMirrorSystem().findLibrary(#coffee_shop);
+  // static Map _allDeclarations = currentMirrorSystem().
+  //     findLibrary(#coffee_shop).
+  //     declarations;
 
-      var c = m.declarations[new Symbol(name)];
-      return c.newInstance(new Symbol(''), []).reflectee;
-    });
+  static Map _allDeclarations = currentMirrorSystem().
+      libraries.
+      values.
+      fold({}, (memo, library) => memo..addAll(library.declarations));
+
+  static Map classMirrors = _allDeclarations.
+    keys.
+    where((k) => _allDeclarations[k] is ClassMirror).
+    where((k) =>
+      _allDeclarations[k].superinterfaces.contains(reflectClass(CoffeeFlavor))
+    ).
+    fold({}, (memo, k) => memo..[k]= _allDeclarations[k]);
+
+  factory CoffeeFlavor(name) {
+    // print(classMirrors);
+    return _cache.putIfAbsent(name, () =>
+        classMirrors[new Symbol(name)].
+            newInstance(new Symbol(''), []).
+            reflectee
+    );
+  }
 
   static get registered => _cache;
 
@@ -70,11 +88,6 @@ class Coffee implements CoffeeFlavor {
 class FlatWhite implements CoffeeFlavor {
   String get name => "Flat White";
   double get profitPerOunce => 0.25;
-}
-
-class Mochachino implements CoffeeFlavor {
-  String get name => "Mochachino";
-  double get profitPerOunce => 0.3;
 }
 
 class Cappuccino implements CoffeeFlavor {
