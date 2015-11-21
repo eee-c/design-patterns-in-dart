@@ -4,3 +4,7 @@ build
 *.dart.precompiled.js
 visitor/*.csv
 tmp
+.pub
+*.js.deps
+*.js.map
+.packages
