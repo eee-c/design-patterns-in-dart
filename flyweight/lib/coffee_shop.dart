@@ -48,10 +48,6 @@ class CoffeeFlavor {
   static Map _cache = {};
   static int get totalCount => _cache.length;
 
-  // static Map _allDeclarations = currentMirrorSystem().
-  //     findLibrary(#coffee_shop).
-  //     declarations;
-
   static Map _allDeclarations = currentMirrorSystem().
       libraries.
       values.
@@ -61,12 +57,12 @@ class CoffeeFlavor {
     keys.
     where((k) => _allDeclarations[k] is ClassMirror).
     where((k) =>
-      _allDeclarations[k].superinterfaces.contains(reflectClass(CoffeeFlavor))
+      _allDeclarations[k].metadata.map((m)=> m.type.reflectedType).contains(Flavor)
     ).
     fold({}, (memo, k) => memo..[k]= _allDeclarations[k]);
 
   factory CoffeeFlavor(name) {
-    // print(classMirrors);
+    print(classMirrors);
     return _cache.putIfAbsent(name, () =>
         classMirrors[new Symbol(name)].
             newInstance(new Symbol(''), []).
@@ -80,36 +76,48 @@ class CoffeeFlavor {
   double get profitPerOunce => 0.0;
 }
 
+// Annotation Class
+class Flavor { const Flavor(); }
+// Annotation instance
+const flavor = const Flavor();
+
+@flavor
 class Coffee implements CoffeeFlavor {
   String get name => "Coffee";
   double get profitPerOunce => 0.05;
 }
 
+@flavor
 class FlatWhite implements CoffeeFlavor {
   String get name => "Flat White";
   double get profitPerOunce => 0.25;
 }
 
+@flavor
 class Cappuccino implements CoffeeFlavor {
   String get name => 'Cappuccino';
   double get profitPerOunce => 0.35;
 }
 
+@flavor
 class Espresso implements CoffeeFlavor {
   String get name => 'Espresso';
   double get profitPerOunce => 0.15;
 }
 
+@flavor
 class Frappe implements CoffeeFlavor {
   String get name => 'Frappe';
   double get profitPerOunce => 0.3;
 }
 
+@flavor
 class Americano implements CoffeeFlavor {
   String get name => 'Americano';
   double get profitPerOunce => 0.2;
 }
 
+@flavor
 class FakeCoffee implements CoffeeFlavor {
   String get name => "Fake Coffee";
   double get profitPerOunce => 0.0;

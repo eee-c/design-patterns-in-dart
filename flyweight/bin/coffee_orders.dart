@@ -25,6 +25,7 @@ import 'package:flyweight_code/coffee_shop.dart';
 // CoffeeShop.takeOrder("Cappuccino", 121)
 // CoffeeShop.takeOrder("Espresso", 121)
 
+@flavor
 class Mochachino implements CoffeeFlavor {
   String get name => "Mochachino";
   double get profitPerOunce => 0.3;
