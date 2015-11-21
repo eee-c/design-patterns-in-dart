@@ -1,5 +1,6 @@
 library coffee_shop;
 
+@MirrorsUsed(metaTargets: "coffee_shop.Flavor")
 import 'dart:mirrors';
 
 class CoffeeShop {
@@ -62,7 +63,7 @@ class CoffeeFlavor {
     fold({}, (memo, k) => memo..[k]= _allDeclarations[k]);
 
   factory CoffeeFlavor(name) {
-    print(classMirrors);
+    // print(classMirrors);
     return _cache.putIfAbsent(name, () =>
         classMirrors[new Symbol(name)].
             newInstance(new Symbol(''), []).
