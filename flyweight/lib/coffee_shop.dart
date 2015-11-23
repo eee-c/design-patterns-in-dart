@@ -1,8 +1,5 @@
 library coffee_shop;
 
-// @MirrorsUsed(metaTargets: "coffee_shop.Flavor")
-// import 'dart:mirrors';
-
 import 'package:reflectable/reflectable.dart';
 
 class CoffeeShop {
@@ -51,33 +48,6 @@ class CoffeeFlavor {
   static Map _cache = {};
   static int get totalCount => _cache.length;
 
-  // static Map _allDeclarations = currentMirrorSystem().
-  //     libraries.
-  //     values.
-  //     fold({}, (memo, library) => memo..addAll(library.declarations));
-
-  // static Map _allDeclarations = flavor.
-  //   libraries.
-  //   values.
-  //   fold({}, (memo, library) => memo..addAll(library.declarations));
-
-  // static Map classMirrors = _allDeclarations.
-  //   keys.
-  //   // where((k) => _allDeclarations[k] is ClassMirror).
-  //   // where((k) => _allDeclarations[k] is InstanceMirror).
-  //   where((k) {
-  //     print(_allDeclarations[k]);
-  //     print(_allDeclarations[k] is ClassMirror);
-  //     print(_allDeclarations[k].metadata);
-  //     return true;
-  //   }).
-  //   where((k) => _allDeclarations[k] is ClassMirror).
-  //   where((k) =>
-  //     // _allDeclarations[k].metadata.map((m)=> m.type.reflectedType).contains(Flavor)
-  //       _allDeclarations[k].metadata.contains(flavor)
-  //   ).
-  //   fold({}, (memo, k) => memo..[k]= _allDeclarations[k]);
-
   static Map classMirrors = flavor.
     annotatedClasses.
     fold({}, (memo, c) => memo..[c.simpleName]= c);
@@ -86,11 +56,7 @@ class CoffeeFlavor {
   factory CoffeeFlavor(name) {
     // print(classMirrors);
     return _cache.putIfAbsent(name, () =>
-        // classMirrors[new Symbol(name)].
-        classMirrors[name].
-            newInstance('', [])
-            // reflectee
-    );
+        classMirrors[name].newInstance('', []));
   }
 
   static get registered => _cache;
@@ -98,12 +64,6 @@ class CoffeeFlavor {
   String get name => "Fake Coffee";
   double get profitPerOunce => 0.0;
 }
-
-// // Annotation Class
-// class Flavor { const Flavor(); }
-// // Annotation instance
-// const flavor = const Flavor();
-
 
 class Flavor extends Reflectable {
   const Flavor()
