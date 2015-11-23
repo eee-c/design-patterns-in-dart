@@ -1,3 +1,11 @@
 name: flyweight_code
 dependencies:
   reflectable: any
+transformers:
+- reflectable:
+    $include: ["bin/*.dart"]
+    entry_points:
+      - bin/coffee_orders.dart
+    formatted: true
+# - $dart2js:
+#     $include: []
