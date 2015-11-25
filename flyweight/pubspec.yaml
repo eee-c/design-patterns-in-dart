@@ -1,8 +1,6 @@
 name: flyweight_code
 dependencies:
   reflectable: any
-dependency_overrides:
-  analyzer: '0.26.1+14'
 transformers:
 - reflectable:
     entry_points:
