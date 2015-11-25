@@ -2,6 +2,13 @@ library coffee_shop;
 
 import 'package:reflectable/reflectable.dart';
 
+class Flavor extends Reflectable {
+  const Flavor()
+    : super(newInstanceCapability);
+}
+
+const flavor = const Flavor();
+
 class CoffeeShop {
   static Map sizes = {
     'small': 8,
@@ -64,13 +71,6 @@ class CoffeeFlavor {
   String get name => "Fake Coffee";
   double get profitPerOunce => 0.0;
 }
-
-class Flavor extends Reflectable {
-  const Flavor()
-    : super(newInstanceCapability);
-}
-
-const flavor = const Flavor();
 
 @flavor
 class Coffee implements CoffeeFlavor {

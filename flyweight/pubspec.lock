@@ -4,7 +4,7 @@ packages:
   analyzer:
     description: analyzer
     source: hosted
-    version: "0.26.3"
+    version: "0.26.1+14"
   args:
     description: args
     source: hosted

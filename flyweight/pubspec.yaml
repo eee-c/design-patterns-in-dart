@@ -1,9 +1,10 @@
 name: flyweight_code
 dependencies:
   reflectable: any
+dependency_overrides:
+  analyzer: '0.26.1+14'
 transformers:
 - reflectable:
-    $include: ["bin/*.dart"]
     entry_points:
       - bin/coffee_orders.dart
     formatted: true
