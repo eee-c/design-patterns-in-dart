@@ -4,7 +4,7 @@ import 'package:reflectable/reflectable.dart';
 
 class Flavor extends Reflectable {
   const Flavor()
-    : super(newInstanceCapability);
+    : super(newInstanceCapability, subtypeQuantifyCapability);
 }
 
 const flavor = const Flavor();
@@ -51,6 +51,7 @@ class Order {
   double get profit => size * flavor.profitPerOunce;
 }
 
+@flavor
 class CoffeeFlavor {
   static Map _cache = {};
   static int get totalCount => _cache.length;
@@ -72,43 +73,36 @@ class CoffeeFlavor {
   double get profitPerOunce => 0.0;
 }
 
-@flavor
 class Coffee implements CoffeeFlavor {
   String get name => "Coffee";
   double get profitPerOunce => 0.05;
 }
 
-@flavor
 class FlatWhite implements CoffeeFlavor {
   String get name => "Flat White";
   double get profitPerOunce => 0.25;
 }
 
-@flavor
 class Cappuccino implements CoffeeFlavor {
   String get name => 'Cappuccino';
   double get profitPerOunce => 0.35;
 }
 
-@flavor
 class Espresso implements CoffeeFlavor {
   String get name => 'Espresso';
   double get profitPerOunce => 0.15;
 }
 
-@flavor
 class Frappe implements CoffeeFlavor {
   String get name => 'Frappe';
   double get profitPerOunce => 0.3;
 }
 
-@flavor
 class Americano implements CoffeeFlavor {
   String get name => 'Americano';
   double get profitPerOunce => 0.2;
 }
 
-@flavor
 class FakeCoffee implements CoffeeFlavor {
   String get name => "Fake Coffee";
   double get profitPerOunce => 0.0;
