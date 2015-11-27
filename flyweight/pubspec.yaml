@@ -1,10 +1,10 @@
 name: flyweight_code
 dependencies:
   reflectable: any
+dev_dependencies:
+  test: any
 transformers:
 - reflectable:
     entry_points:
       - bin/coffee_orders.dart
     formatted: true
-# - $dart2js:
-#     $include: []
