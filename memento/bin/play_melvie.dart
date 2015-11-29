@@ -3,34 +3,34 @@
 import 'package:memento_code/velvet_fog_machine.dart';
 
 main() {
-  List<Memento> replayer = [];
+  List<Playing> replayer = [];
 
-  var scatter = new VelvetFogMachine();
-  scatter.play(
+  var scatMan = new VelvetFogMachine();
+  scatMan.play(
       'Blue Moon',
       'The Velvet Frog: The Very Best of Mel Tormé'
   );
-  scatter.play(
+  scatMan.play(
       '\'Round Midnight',
       'Tormé'
   );
-  replayer.add(scatter.nowPlaying);
+  replayer.add(scatMan.nowPlaying);
 
-  scatter.play(
+  scatMan.play(
       'It Don\'t Mean A Thing (If It Ain\'t Got That Swing)',
       'Best Of/ 20th Century'
   );
-  scatter.play(
+  scatMan.play(
       'New York, New York Medley',
       'A Vintage Year'
   );
-  replayer.add(scatter.nowPlaying);
+  replayer.add(scatMan.nowPlaying);
 
-  scatter.play(
+  scatMan.play(
       'The Lady is a Tramp',
       'The Velvet Frog: The Very Best of Mel Tormé'
   );
 
   // The New York, New York Medley with George Shearing really is wonderful
-  scatter.backTo(replayer[1]);
+  scatMan.backTo(replayer[1]);
 }
