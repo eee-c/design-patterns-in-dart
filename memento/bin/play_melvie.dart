@@ -33,4 +33,12 @@ main() {
 
   // The New York, New York Medley with George Shearing really is wonderful
   scatMan.backTo(replayer.last);
+
+  // This should not work:
+  try {
+    print("Caretaker says last remembered song is: ${replayer.last.song}");
+  }
+  on NoSuchMethodError {
+    print("Yay! Caretaker was denied access to the memento song.");
+  }
 }

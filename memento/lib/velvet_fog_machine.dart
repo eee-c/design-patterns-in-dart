@@ -52,7 +52,7 @@ class Playing {
 
     try { throw new Error(); }
     catch (_exception, stackTrace) {
-      print(stackTrace.toString());
+      // print(stackTrace.toString());
       if (!stackTrace.toString().contains(new RegExp(r'\#1\s+VelvetFogMachine'))) {
         return super.noSuchMethod(i);
       }
