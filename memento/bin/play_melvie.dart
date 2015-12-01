@@ -32,5 +32,5 @@ main() {
   );
 
   // The New York, New York Medley with George Shearing really is wonderful
-  scatMan.backTo(replayer[1]);
+  scatMan.backTo(replayer.last);
 }

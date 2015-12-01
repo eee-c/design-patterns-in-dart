@@ -41,8 +41,26 @@ class Song {
 }
 
 // The Memento
+@proxy
 class Playing {
-  Song song;
-  double time;
-  Playing(this.song, this.time);
+  Song _song;
+  double _time;
+  Playing(this._song, this._time);
+
+  noSuchMethod(Invocation i) {
+    if (!i.isGetter) return super.noSuchMethod(i);
+
+    try { throw new Error(); }
+    catch (_exception, stackTrace) {
+      print(stackTrace.toString());
+      if (!stackTrace.toString().contains(new RegExp(r'\#1\s+VelvetFogMachine'))) {
+        return super.noSuchMethod(i);
+      }
+    }
+
+    if (i.memberName == #song) return this._song;
+    if (i.memberName == #time) return this._time;
+
+    return super.noSuchMethod(i);
+  }
 }
