@@ -36,7 +36,7 @@ main() {
 
   // This should not work:
   try {
-    print("Caretaker says last remembered song is: ${replayer.last.song}");
+    print("Caretaker says last remembered song is: ${replayer.last.secretSong(0.0)}");
   }
   on NoSuchMethodError {
     print("Yay! Caretaker was denied access to the memento song.");

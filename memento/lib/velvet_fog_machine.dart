@@ -7,6 +7,7 @@ final rand = new Random(1);
 class VelvetFogMachine {
   Song currentSong;
   double currentTime;
+  final double _secret = rand.nextDouble();
 
   // Set the state
   void play(String title, String album, [double time = 0.0]) {
@@ -24,13 +25,13 @@ class VelvetFogMachine {
     // Simulate playing at some time later:
     var time = 5*rand.nextDouble();
 
-    return new Playing(currentSong, time);
+    return new Playing.forTheVelvetFogMachine(currentSong, time, _secret);
   }
 
   // Restore from memento
   void backTo(Playing p) {
     print("  *** Whoa! This was a good one, let's hear it again :) ***");
-    _play(p.song, p.time);
+    _play(p.secretSong(_secret), p.secretTime(_secret));
   }
 }
 
@@ -41,26 +42,32 @@ class Song {
 }
 
 // The Memento
-@proxy
 class Playing {
   Song _song;
   double _time;
-  Playing(this._song, this._time);
+  double _secret;
 
-  noSuchMethod(Invocation i) {
-    if (!i.isGetter) return super.noSuchMethod(i);
+  // Narrow interface for the world
+  Playing();
 
-    try { throw new Error(); }
-    catch (_exception, stackTrace) {
-      // print(stackTrace.toString());
-      if (!stackTrace.toString().contains(new RegExp(r'\#1\s+VelvetFogMachine'))) {
-        return super.noSuchMethod(i);
-      }
-    }
+  // Wide interface for the VelvetFogMachine
+  Playing.forTheVelvetFogMachine(this._song, this._time, this._secret);
 
-    if (i.memberName == #song) return this._song;
-    if (i.memberName == #time) return this._time;
+  Song secretSong(double secret) {
+    // Runtime check for access
+    _checkAccess(secret, #secretSong);
+    return _song;
+  }
 
-    return super.noSuchMethod(i);
+  double secretTime(double secret) {
+    // Runtime check for access
+    _checkAccess(secret, #secretTime);
+    return _time;
+  }
+
+  _checkAccess(secret, memberName) {
+    if (secret == _secret) return;
+
+    throw new NoSuchMethodError(this, memberName, [secret], {});
   }
 }
