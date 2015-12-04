@@ -5,7 +5,7 @@ final rand = new Random(1);
 
 // The "Originator"
 class VelvetFogMachine {
-  Song currentSong;
+  Song currentSong, _lastSong;
   double currentTime;
 
   // Set the state
@@ -22,15 +22,20 @@ class VelvetFogMachine {
   // Create a memento of the current state
   Playing get nowPlaying {
     // Simulate playing at some time later:
-    var time = 5*rand.nextDouble();
+    currentTime += 2*rand.nextDouble();
 
-    return new Playing(currentSong, time);
+    var song  = (_lastSong == currentSong) ? null : currentSong;
+    _lastSong = currentSong;
+
+    return new Playing(song, currentTime);
   }
 
   // Restore from memento
   void backTo(Playing p) {
-    print("  *** Whoa! This was a good one, let's hear it again :) ***");
-    _play(p._song, p._time);
+    print("\n===> (backTo)");
+    print(p._song);
+    var song = (p._song == null) ? _lastSong : p._song;
+    _play(song, p._time);
   }
 }
 
@@ -38,6 +43,11 @@ class Song {
   String title, album;
   Song(this.title, this.album);
   String toString() => "$title // $album";
+  bool operator ==(other) {
+    print('====');
+    return this.title == other.title &&
+      this.album == other.album;
+  }
 }
 
 // The Memento

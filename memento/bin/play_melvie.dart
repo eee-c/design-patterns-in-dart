@@ -25,6 +25,9 @@ main() {
       'A Vintage Year'
   );
   replayer.add(scatMan.nowPlaying);
+  replayer.add(scatMan.nowPlaying);
+  replayer.add(scatMan.nowPlaying);
+  replayer.add(scatMan.nowPlaying);
 
   scatMan.play(
       'The Lady is a Tramp',
@@ -32,14 +35,17 @@ main() {
   );
 
   // The New York, New York Medley with George Shearing really is wonderful
-  scatMan.backTo(replayer.last);
-
-  // This should not work:
-  try {
-    print(replayer.last);
-    print("Caretaker says last remembered song is: ${replayer.last._song}");
-  }
-  on NoSuchMethodError {
-    print("Yay! Caretaker was denied access to the memento song.");
-  }
+  scatMan.backTo(replayer.removeLast());
+  scatMan.backTo(replayer.removeLast());
+  scatMan.backTo(replayer.removeLast());
+  scatMan.backTo(replayer.removeLast());
 }
+
+/* Test code for memento access */
+  // // This should not work:
+  // try {
+  //   print("Caretaker says last remembered song is: ${replayer.last._song}");
+  // }
+  // on NoSuchMethodError {
+  //   print("Yay! Caretaker was denied access to the memento song.");
+  // }
