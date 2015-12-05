@@ -34,12 +34,30 @@ main() {
   // The New York, New York Medley with George Shearing really is wonderful
   scatMan.backTo(replayer.last);
 
-  // This should not work:
-  try {
-    print(replayer.last);
-    print("Caretaker says last remembered song is: ${replayer.last._song}");
+  print('--');
+
+  var collection = new SongCollection();
+  collection
+    ..add(new Song('The Lady is a Tramp', 'The Velvet Frog: The Very Best of Mel Tormé'))
+    ..add(new Song('New York, New York Medley', 'A Vintage Year'))
+    ..add(new Song('Blue Moon', 'The Velvet Frog: The Very Best of Mel Tormé'))
+    ..add(new Song('\'Round Midnight', 'Tormé'));
+
+  var state = collection.createInitialState();
+
+  while (!collection.isDone(state)) {
+    collection.currentItem(state).play();
+    collection.next(state);
   }
-  on NoSuchMethodError {
-    print("Yay! Caretaker was denied access to the memento song.");
-  }
+
 }
+
+/* Test code for memento access */
+  // // This should not work:
+  // try {
+  //   print(replayer.last);
+  //   print("Caretaker says last remembered song is: ${replayer.last._song}");
+  // }
+  // on NoSuchMethodError {
+  //   print("Yay! Caretaker was denied access to the memento song.");
+  // }

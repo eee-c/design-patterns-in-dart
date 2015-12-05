@@ -34,9 +34,31 @@ class VelvetFogMachine {
   }
 }
 
+
+class SongCollection {
+  List _list = [];
+
+  SongCollection();
+
+  IterationState createInitialState() => new IterationState();
+  void next(IterationState state) { state.increment(); }
+  bool isDone(IterationState state) => state.index >= _list.length;
+  Song currentItem(IterationState state) => _list[state.index];
+
+  void add(Song s) { _list.add(s); }
+}
+
+class IterationState {
+  int index = 0;
+  void increment() { index++; }
+}
+
 class Song {
   String title, album;
   Song(this.title, this.album);
+  void play() {
+    print("Playing ${toString()}");
+  }
   String toString() => "$title // $album";
 }
 
