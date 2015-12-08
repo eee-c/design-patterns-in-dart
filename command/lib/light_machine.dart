@@ -2,17 +2,18 @@ library light_machine;
 
 // Invoker
 class Switch {
-  List<Command> _history = [];
+  List<Function> _history = [];
 
-  void storeAndExecute(Command c) {
-    c.execute();
+  // void storeAndExecute(Command c) {
+  void storeAndExecute(Function c) {
+    c.call();
     _history.add(c);
   }
 
   void undo() {
     _history.
       reversed.
-      forEach((c) { c.execute(); });
+      forEach((c) { c.call(); });
   }
 }
 

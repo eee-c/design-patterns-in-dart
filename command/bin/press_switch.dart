@@ -7,8 +7,11 @@ main(List<String> args) {
   var s = new Switch(),
     lamp = new Light();
 
-  var switchUp = new OnCommand(lamp),
-    switchDown = new OffCommand(lamp);
+  // var switchUp = new OnCommand(lamp),
+  //   switchDown = new OffCommand(lamp);
+
+  var switchUp = (){ lamp.turn('ON'); },
+    switchDown = (){ lamp.turn('OFF'); };
 
   args.forEach((command){
     switch (command) {
