@@ -20,7 +20,9 @@ class Switch {
 
 // Receiver
 class Light {
-  void turn(String state) {
+  String state = 'OFF';
+  void turn(String newState) {
+    state = newState;
     print("Light ${state}");
   }
 }
@@ -30,18 +32,41 @@ abstract class Command {
   void call();
 }
 
-// Concrete Command
-class OnCommand implements Command {
+class LightCommand implements Command {
   Light light;
-  OnCommand(this.light);
-  void call() { light.turn('ON'); }
-  void undo() { light.turn('OFF'); }
+  String _prev;
+  LightCommand(this.light);
+  void call() {
+    _prev = light.state;
+  }
+  void undo() {
+    light.turn(_prev);
+  }
 }
 
 // Concrete Command
-class OffCommand implements Command {
-  Light light;
-  OffCommand(this.light);
-  void call() { light.turn('OFF'); }
-  void undo() { light.turn('ON'); }
+class OnCommand extends LightCommand {
+  OnCommand(light): super(light);
+  void call() {
+    super.call();
+    light.turn('ON');
+  }
+}
+
+// Concrete Command
+class OffCommand extends LightCommand {
+  OffCommand(light): super(light);
+  void call() {
+    super.call();
+    light.turn('OFF');
+  }
+}
+
+// Concrete Command
+class FiftyCommand extends LightCommand {
+  FiftyCommand(light): super(light);
+  void call() {
+    super.call();
+    light.turn('50%');
+  }
 }

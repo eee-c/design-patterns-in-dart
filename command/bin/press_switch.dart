@@ -14,7 +14,8 @@ main(List<String> commands) {
 
   // Concrete command instances
   var switchUp = new OnCommand(lamp),
-    switchDown = new OffCommand(lamp);
+    switchDown = new OffCommand(lamp),
+    switch50 = new FiftyCommand(lamp);
 
   // // Concrete command instances (callback version)
   // var switchUp = (){ lamp.turn('ON'); },
@@ -24,6 +25,7 @@ main(List<String> commands) {
   var queue = commands.map((command){
     if (command == 'on') return switchUp;
     if (command == 'off') return switchDown;
+    if (command == '50') return switch50;
     print("Can only switch on or off");
   }).toList();
 
