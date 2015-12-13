@@ -17,25 +17,32 @@ main() {
   ]);
 
   // Concrete command instances
-  var menuPlay = new PlayCommand(machine),
-    menuAddToPlaylist = new PlaylistAddCommand(playlist),
-    menuRemoveFromPlaylist = new PlaylistRemoveCommand(playlist),
-    menuClearPlaylist = new PlaylistClearCommand(playlist);
+  var play = new PlayCommand(machine),
+    addToPlaylist = new PlaylistAddCommand(playlist),
+    removeFromPlaylist = new PlaylistRemoveCommand(playlist),
+    clearPlaylist = new PlaylistClearCommand(playlist);
 
-  menu.call(menuPlay, ['It Had to Be You']);
-
-  print('--');
-  menu.call(menuPlay, [playlist]);
-
-  print('--');
-  menu.call(menuAddToPlaylist, ['Blue Moon']);
-  menu.call(menuPlay, [playlist]);
+  menu.call(play, ['It Had to Be You']);
+  menu.call(play, ['Cheek to Cheek']);
+  menu.undo();
 
   print('--');
-  menu.call(menuRemoveFromPlaylist, ['The Lady is a Tramp']);
-  menu.call(menuPlay, [playlist]);
+  menu.call(play, [playlist]);
 
   print('--');
-  menu.call(menuClearPlaylist);
-  menu.call(menuPlay, [playlist]);
+  menu.call(removeFromPlaylist, ['New York, New York']);
+  menu.undo();
+  menu.call(play, [playlist]);
+
+  print('--');
+  menu.call(addToPlaylist, ['Blue Moon']);
+  menu.call(play, [playlist]);
+
+  print('--');
+  menu.call(clearPlaylist);
+  menu.undo();
+  menu.call(play, [playlist]);
+
+  print('--');
+  menu.undoAll();
 }
