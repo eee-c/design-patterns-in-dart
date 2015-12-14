@@ -20,43 +20,43 @@ main() {
     playlistClear = new PlaylistClearCommand(playlist);
 
   // Invokers
-  var menuPlay =
-    new MenuItem("Play", play);
+  var btnPlay =
+    new Button("Play", play);
 
-  var menuPlaylistAdd =
-    new MenuItem("Add to Playlist", playlistAdd);
+  var btnPlaylistAdd =
+    new Button("Add to Playlist", playlistAdd);
 
-  var menuPlaylistRemove =
-    new MenuItem("Remove From Playlist", playlistRemove);
+  var btnPlaylistRemove =
+    new Button("Remove From Playlist", playlistRemove);
 
-  var menuPlaylistClear =
-    new MenuItem("Clear From Playlist", playlistClear);
+  var btnPlaylistClear =
+    new Button("Clear From Playlist", playlistClear);
 
 
-  menuPlay.call(['It Had to Be You']);
-  menuPlay.call(['Cheek to Cheek']);
-  menuPlay.call(['At Last']);
-  MenuItem.undo();
+  btnPlay.call(['It Had to Be You']);
+  btnPlay.call(['Cheek to Cheek']);
+  btnPlay.call(['At Last']);
+  Button.undo();
   // // TODO: Bug in multiple undos
-  // MenuItem.undo();
+  // Button.undo();
 
   print('--');
-  menuPlay.call( [playlist]);
+  btnPlay.call( [playlist]);
 
   print('--');
-  menuPlaylistRemove.call(['New York, New York']);
-  MenuItem.undo();
-  menuPlay.call([playlist]);
+  btnPlaylistRemove.call(['New York, New York']);
+  Button.undo();
+  btnPlay.call([playlist]);
 
   print('--');
-  menuPlaylistAdd.call(['Blue Moon']);
-  menuPlay.call([playlist]);
+  btnPlaylistAdd.call(['Blue Moon']);
+  btnPlay.call([playlist]);
 
   print('--');
-  menuPlaylistClear.call();
-  MenuItem.undo();
-  menuPlay.call([playlist]);
+  btnPlaylistClear.call();
+  Button.undo();
+  btnPlay.call([playlist]);
 
   print('--');
-  MenuItem.undoAll();
+  Button.undoAll();
 }

@@ -1,12 +1,12 @@
 library velvet_fog_machine;
 
 // Invoker
-class MenuItem {
+class Button {
   static List _history = [];
 
   String name;
   Command command;
-  MenuItem(this.name, this.command);
+  Button(this.name, this.command);
 
   void call([List args]) {
     if (args != null)
