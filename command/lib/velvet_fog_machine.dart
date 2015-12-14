@@ -1,25 +1,29 @@
 library velvet_fog_machine;
 
 // Invoker
-class Menu {
-  List _history = [];
+class MenuItem {
+  static List _history = [];
 
-  void call(Command c, [List args]) {
+  String name;
+  Command command;
+  MenuItem(this.name, this.command);
+
+  void call([List args]) {
     if (args != null)
-      c.call(args);
+      command.call(args);
     else
-      c.call();
+      command.call();
 
-    _history.add(c);
+    _history.add(command);
   }
 
-  void undo() {
+  static void undo() {
     var h = _history.removeLast();
     print("Undoing $h");
     h.undo();
   }
 
-  void undoAll() {
+  static void undoAll() {
     _history.forEach((h) { print(h); });
   }
 }

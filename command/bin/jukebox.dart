@@ -4,9 +4,6 @@ import 'package:command_code/velvet_fog_machine.dart';
 
 // Client
 main() {
-  // Invoker
-  var menu = new Menu();
-
   // Receivers
   var machine = new VelvetFogMachine();
   var playlist = new Playlist([
@@ -18,31 +15,48 @@ main() {
 
   // Concrete command instances
   var play = new PlayCommand(machine),
-    addToPlaylist = new PlaylistAddCommand(playlist),
-    removeFromPlaylist = new PlaylistRemoveCommand(playlist),
-    clearPlaylist = new PlaylistClearCommand(playlist);
+    playlistAdd = new PlaylistAddCommand(playlist),
+    playlistRemove = new PlaylistRemoveCommand(playlist),
+    playlistClear = new PlaylistClearCommand(playlist);
 
-  menu.call(play, ['It Had to Be You']);
-  menu.call(play, ['Cheek to Cheek']);
-  menu.undo();
+  // Invokers
+  var menuPlay =
+    new MenuItem("Play", play);
+
+  var menuPlaylistAdd =
+    new MenuItem("Add to Playlist", playlistAdd);
+
+  var menuPlaylistRemove =
+    new MenuItem("Remove From Playlist", playlistRemove);
+
+  var menuPlaylistClear =
+    new MenuItem("Clear From Playlist", playlistClear);
+
+
+  menuPlay.call(['It Had to Be You']);
+  menuPlay.call(['Cheek to Cheek']);
+  menuPlay.call(['At Last']);
+  MenuItem.undo();
+  // // TODO: Bug in multiple undos
+  // MenuItem.undo();
 
   print('--');
-  menu.call(play, [playlist]);
+  menuPlay.call( [playlist]);
 
   print('--');
-  menu.call(removeFromPlaylist, ['New York, New York']);
-  menu.undo();
-  menu.call(play, [playlist]);
+  menuPlaylistRemove.call(['New York, New York']);
+  MenuItem.undo();
+  menuPlay.call([playlist]);
 
   print('--');
-  menu.call(addToPlaylist, ['Blue Moon']);
-  menu.call(play, [playlist]);
+  menuPlaylistAdd.call(['Blue Moon']);
+  menuPlay.call([playlist]);
 
   print('--');
-  menu.call(clearPlaylist);
-  menu.undo();
-  menu.call(play, [playlist]);
+  menuPlaylistClear.call();
+  MenuItem.undo();
+  menuPlay.call([playlist]);
 
   print('--');
-  menu.undoAll();
+  MenuItem.undoAll();
 }
