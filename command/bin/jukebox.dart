@@ -37,8 +37,7 @@ main() {
   btnPlay.call(['Cheek to Cheek']);
   btnPlay.call(['At Last']);
   Button.undo();
-  // // TODO: Bug in multiple undos
-  // Button.undo();
+  Button.undo();
 
   print('--');
   btnPlay.call( [playlist]);

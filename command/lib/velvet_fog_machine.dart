@@ -14,7 +14,7 @@ class Button {
     else
       command.call();
 
-    _history.add(command);
+    _history.add(command._clone());
   }
 
   static void undo() {
@@ -51,6 +51,7 @@ class Playlist {
 abstract class Command {
   void call([List args]);
   void undo();
+  Command _clone();
 }
 
 class PlayCommand implements Command {
@@ -67,6 +68,10 @@ class PlayCommand implements Command {
   void undo() {
     machine.play(_prevSong);
   }
+
+  PlayCommand _clone() =>
+    new PlayCommand(machine)
+        .._prevSong = _prevSong;
 }
 
 class PlaylistAddCommand implements Command {
@@ -82,6 +87,8 @@ class PlaylistAddCommand implements Command {
   void undo() {
     playlist.songs = _prev.songs;
   }
+
+  Command _clone() => this;
 }
 
 class PlaylistRemoveCommand implements Command {
@@ -98,6 +105,8 @@ class PlaylistRemoveCommand implements Command {
   void undo() {
     playlist.songs = _prev.songs;
   }
+
+  Command _clone() => this;
 }
 
 class PlaylistClearCommand implements Command {
@@ -114,4 +123,6 @@ class PlaylistClearCommand implements Command {
   void undo() {
     playlist.songs = _prev.songs;
   }
+
+  Command _clone() => this;
 }
