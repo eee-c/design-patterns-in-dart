@@ -5,6 +5,7 @@ enum Direction { NORTH, SOUTH, EAST, WEST }
 // Invoker
 class Button {
   static List _history = [];
+  static List _undoHistory = [];
 
   String name;
   Command command;
@@ -20,6 +21,14 @@ class Button {
     var h = _history.removeLast();
     print("Undoing $h");
     h.undo();
+    _undoHistory.add(h);
+  }
+
+  static void redo() {
+    var h = _undoHistory.removeLast();
+    print("Re-doing $h");
+    h.call();
+    _history.add(h);
   }
 
   static void undoAll() {
@@ -74,34 +83,48 @@ class MoveNorthCommand implements Command {
   Robot robot;
   MoveNorthCommand(this.robot);
   void call() { robot.move(Direction.NORTH); }
+  void undo() { robot.move(Direction.SOUTH); }
 }
 
 class MoveSouthCommand implements Command {
   Robot robot;
   MoveSouthCommand(this.robot);
   void call() { robot.move(Direction.SOUTH); }
+  void undo() { robot.move(Direction.NORTH); }
 }
 
 class MoveEastCommand implements Command {
   Robot robot;
   MoveEastCommand(this.robot);
   void call() { robot.move(Direction.EAST); }
+  void undo() { robot.move(Direction.WEST); }
 }
 
 class MoveWestCommand implements Command {
   Robot robot;
   MoveWestCommand(this.robot);
   void call() { robot.move(Direction.WEST); }
+  void undo() { robot.move(Direction.EAST); }
 }
 
 class StartRecordingCommand implements Command {
   Camera camera;
   StartRecordingCommand(this.camera);
   void call() { camera.startRecording(); }
+  void undo() { camera.stopRecording(); }
 }
 
 class StopRecordingCommand implements Command {
   Camera camera;
   StopRecordingCommand(this.camera);
   void call() { camera.stopRecording(); }
+  void undo() { camera.startRecording(); }
+}
+
+class UndoCommand implements Command {
+  void call() { Button.undo(); }
+}
+
+class RedoCommand implements Command {
+  void call() { Button.redo(); }
 }

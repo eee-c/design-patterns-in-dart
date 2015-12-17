@@ -15,6 +15,8 @@ main() {
     moveWest = new MoveWestCommand(robot),
     startRecording = new StartRecordingCommand(camera),
     stopRecording = new StopRecordingCommand(camera);
+    // undo = new UndoCommand(),
+    // redo = new RedoCommand();
 
   // Invokers
   var btnUp = new Button("Up", moveNorth);
@@ -23,10 +25,27 @@ main() {
   var btnRight = new Button("Down", moveEast);
   var btnRecord = new Button("Record", startRecording);
   var btnStopRecord = new Button("Stop Recording", stopRecording);
+  // var btnUndo = new Button("Undo", undo);
+  // var btnRedo = new Button("Redo", redo);
 
   btnUp.press();
   btnUp.press();
   btnUp.press();
+  btnUp.press();
+  btnUp.press();
+  btnUp.press();
+
+  Button.undo();
+  Button.undo();
+  Button.redo();
+
+  print("\nRobot is now at: ${robot.location}");
+
+
+  // btnUndo.press();
+  // btnUndo.press();
+  // btnRedo.press();
+
   btnRight.press();
   btnRight.press();
   btnRight.press();
@@ -36,6 +55,5 @@ main() {
   btnRecord.press();
   btnStopRecord.press();
 
-  print("\nRobot is now at: ${robot.location}"
-);
+  print("\nRobot is now at: ${robot.location}");
 }
