@@ -4,9 +4,6 @@ enum Direction { NORTH, SOUTH, EAST, WEST }
 
 // Invoker
 class Button {
-  static List _history = [];
-  static List _undoHistory = [];
-
   String name;
   Command command;
   Button(this.name, this.command);
@@ -14,25 +11,36 @@ class Button {
   void press() {
     print("[pressed] $name");
     command.call();
-    _history.add(command);
+    History.add(command);
+  }
+}
+
+class History {
+  List _undoCommands = [];
+  List _redoCommands = [];
+
+  static final History _h = new History._internal();
+  factory History() => _h;
+  History._internal();
+
+  static void add(Command c) {
+    if (c.runtimeType == UndoCommand) return;
+    if (c.runtimeType == RedoCommand) return;
+
+    _h._undoCommands.add(c);
   }
 
-  static void undo() {
-    var h = _history.removeLast();
+  void undo() {
+    var h = _undoCommands.removeLast();
     print("Undoing $h");
     h.undo();
-    _undoHistory.add(h);
+    _redoCommands.add(h);
   }
-
-  static void redo() {
-    var h = _undoHistory.removeLast();
+  void redo() {
+    var h = _redoCommands.removeLast();
     print("Re-doing $h");
     h.call();
-    _history.add(h);
-  }
-
-  static void undoAll() {
-    _history.forEach((h) { print(h); });
+    _undoCommands.add(h);
   }
 }
 
@@ -122,9 +130,13 @@ class StopRecordingCommand implements Command {
 }
 
 class UndoCommand implements Command {
-  void call() { Button.undo(); }
+  History history;
+  UndoCommand(this.history);
+  void call() { history.undo(); }
 }
 
 class RedoCommand implements Command {
-  void call() { Button.redo(); }
+  History history;
+  RedoCommand(this.history);
+  void call() { history.redo(); }
 }

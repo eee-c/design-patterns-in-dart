@@ -7,6 +7,7 @@ main() {
   // Receivers
   var robot = new Robot();
   var camera = robot.camera;
+  var history = new History();
 
   // Concrete command instances
   var moveNorth = new MoveNorthCommand(robot),
@@ -14,9 +15,9 @@ main() {
     moveEast = new MoveEastCommand(robot),
     moveWest = new MoveWestCommand(robot),
     startRecording = new StartRecordingCommand(camera),
-    stopRecording = new StopRecordingCommand(camera);
-    // undo = new UndoCommand(),
-    // redo = new RedoCommand();
+    stopRecording = new StopRecordingCommand(camera),
+    undo = new UndoCommand(history),
+    redo = new RedoCommand(history);
 
   // Invokers
   var btnUp = new Button("Up", moveNorth);
@@ -25,19 +26,16 @@ main() {
   var btnRight = new Button("Down", moveEast);
   var btnRecord = new Button("Record", startRecording);
   var btnStopRecord = new Button("Stop Recording", stopRecording);
-  // var btnUndo = new Button("Undo", undo);
-  // var btnRedo = new Button("Redo", redo);
+  var btnUndo = new Button("Undo", undo);
+  var btnRedo = new Button("Redo", redo);
 
   btnUp.press();
   btnUp.press();
   btnUp.press();
-  btnUp.press();
-  btnUp.press();
-  btnUp.press();
 
-  Button.undo();
-  Button.undo();
-  Button.redo();
+  btnUndo.press();
+  btnUndo.press();
+  btnRedo.press();
 
   print("\nRobot is now at: ${robot.location}");
 
