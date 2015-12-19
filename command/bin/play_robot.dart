@@ -14,6 +14,7 @@ main() {
     moveSouth = new MoveSouthCommand(robot),
     moveEast = new MoveEastCommand(robot),
     moveWest = new MoveWestCommand(robot),
+    danceHappy = new DanceHappyCommand(robot),
     startRecording = new StartRecordingCommand(camera),
     stopRecording = new StopRecordingCommand(camera),
     undo = new UndoCommand(history),
@@ -24,10 +25,19 @@ main() {
   var btnDown = new Button("Down", moveSouth);
   var btnLeft = new Button("Left", moveWest);
   var btnRight = new Button("Down", moveEast);
+  var btnHappyDance = new Button("Happy Dance", danceHappy);
   var btnRecord = new Button("Record", startRecording);
   var btnStopRecord = new Button("Stop Recording", stopRecording);
   var btnUndo = new Button("Undo", undo);
   var btnRedo = new Button("Redo", redo);
+
+  btnHappyDance.press();
+  print("\nRobot is now at: ${robot.location}");
+  print("--\n");
+
+  btnUndo.press();
+  print("\nRobot is now at: ${robot.location}");
+  print("--\n");
 
   btnUp.press();
   btnUp.press();
@@ -38,11 +48,7 @@ main() {
   btnRedo.press();
 
   print("\nRobot is now at: ${robot.location}");
-
-
-  // btnUndo.press();
-  // btnUndo.press();
-  // btnRedo.press();
+  print("--\n");
 
   btnRight.press();
   btnRight.press();

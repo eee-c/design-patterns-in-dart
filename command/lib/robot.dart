@@ -1,6 +1,10 @@
 library robot;
 
+import 'dart:math';
+
 enum Direction { NORTH, SOUTH, EAST, WEST }
+
+final rand = new Random(3);
 
 // Invoker
 class Button {
@@ -113,6 +117,37 @@ class MoveWestCommand implements Command {
   MoveWestCommand(this.robot);
   void call() { robot.move(Direction.WEST); }
   void undo() { robot.move(Direction.EAST); }
+}
+
+class DanceHappyCommand implements Command {
+  Robot robot;
+  int _prevX, _prevY;
+  DanceHappyCommand(this.robot);
+  void call() {
+    _prevX = robot.x;
+    _prevY = robot.y;
+    for (var i=0; i<8; i++) {
+      // robot.move(Direction.values[rand.nextInt(4)]);
+      int r = rand.nextInt(4);
+      if (r==0) new MoveNorthCommand(robot).call();
+      if (r==1) new MoveSouthCommand(robot).call();
+      if (r==2) new MoveEastCommand(robot).call();
+      if (r==3) new MoveWestCommand(robot).call();
+    }
+  }
+  void undo() {
+    var dir;
+
+    dir = robot.x > _prevX ? Direction.WEST : Direction.EAST;
+    while (robot.x != _prevX) {
+      robot.move(dir);
+    }
+
+    dir = robot.y > _prevY ? Direction.SOUTH : Direction.NORTH;
+    while (robot.y != _prevY) {
+      robot.move(dir);
+    }
+  }
 }
 
 class StartRecordingCommand implements Command {
