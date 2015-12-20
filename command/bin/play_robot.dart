@@ -31,6 +31,9 @@ main() {
   var btnUndo = new Button("Undo", undo);
   var btnRedo = new Button("Redo", redo);
 
+  var btnSayHi = new Button("Hi!", (){ robot.say("Hi!"); });
+  var btnScare = new Button("Scare Robot", (){ robot.say("Ahhhhh!"); });
+
   btnHappyDance.press();
   print("\nRobot is now at: ${robot.location}");
   print("--\n");
@@ -42,6 +45,9 @@ main() {
   btnUp.press();
   btnUp.press();
   btnUp.press();
+
+  btnSayHi.press();
+  btnScare.press();
 
   btnUndo.press();
   btnUndo.press();

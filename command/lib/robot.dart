@@ -9,7 +9,7 @@ final rand = new Random(3);
 // Invoker
 class Button {
   String name;
-  Command command;
+  Function command;
   Button(this.name, this.command);
 
   void press() {
@@ -27,9 +27,17 @@ class History {
   factory History() => _h;
   History._internal();
 
-  static void add(Command c) {
+  static void add(Function c) {
     if (c.runtimeType == UndoCommand) return;
     if (c.runtimeType == RedoCommand) return;
+    if (c is! Command) return;
+
+    // Also works:
+    // if (c.runtimeType.toString() == (){}.runtimeType.toString()) return;
+    // These do not work
+    // if (c.runtimeType == (){}.runtimeType) return;
+    // if (c.runtimeType == Function) return;
+    // if (c is Function) return;
 
     _h._undoCommands.add(c);
   }
@@ -73,6 +81,7 @@ class Robot {
         break;
     }
   }
+  void say(String something) { print(something); }
 }
 
 class Camera {
@@ -87,7 +96,7 @@ class Camera {
   }
 }
 
-abstract class Command {
+abstract class Command implements Function {
   void call();
 }
 
