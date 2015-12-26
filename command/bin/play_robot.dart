@@ -17,6 +17,7 @@ main() {
     danceHappy = new DanceHappyCommand(robot),
     startRecording = new StartRecordingCommand(camera),
     stopRecording = new StopRecordingCommand(camera),
+    beSad = new SimpleCommand<Robot>(robot, #say, ['Boo hoo.']),
     undo = new UndoCommand(history),
     redo = new RedoCommand(history);
 
@@ -33,6 +34,7 @@ main() {
 
   var btnSayHi = new Button("Hi!", (){ robot.say("Hi!"); });
   var btnScare = new Button("Scare Robot", (){ robot.say("Ahhhhh!"); });
+  var btnTease = new Button("Tease Robot", beSad);
 
   btnHappyDance.press();
   print("\nRobot is now at: ${robot.location}");
@@ -48,6 +50,7 @@ main() {
 
   btnSayHi.press();
   btnScare.press();
+  btnTease.press();
 
   btnUndo.press();
   btnUndo.press();

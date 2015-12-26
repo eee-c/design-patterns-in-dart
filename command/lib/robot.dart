@@ -1,6 +1,7 @@
 library robot;
 
 import 'dart:math';
+import 'dart:mirrors';
 
 enum Direction { NORTH, SOUTH, EAST, WEST }
 
@@ -28,16 +29,7 @@ class History {
   History._internal();
 
   static void add(Function c) {
-    if (c.runtimeType == UndoCommand) return;
-    if (c.runtimeType == RedoCommand) return;
-    if (c is! Command) return;
-
-    // Also works:
-    // if (c.runtimeType.toString() == (){}.runtimeType.toString()) return;
-    // These do not work
-    // if (c.runtimeType == (){}.runtimeType) return;
-    // if (c.runtimeType == Function) return;
-    // if (c is Function) return;
+    if (!reflect(c).type.instanceMembers.containsKey(#undo)) return;
 
     _h._undoCommands.add(c);
   }
@@ -98,6 +90,16 @@ class Camera {
 
 abstract class Command implements Function {
   void call();
+}
+
+class SimpleCommand<T> implements Command {
+  T receiver;
+  Symbol action;
+  List args=[];
+  SimpleCommand(this.receiver, this.action, [this.args]);
+  void call() {
+    reflect(receiver).invoke(action, this.args);
+  }
 }
 
 class MoveNorthCommand implements Command {
