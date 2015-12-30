@@ -32,6 +32,8 @@ main() {
   var btnUndo = new Button("Undo", undo);
   var btnRedo = new Button("Redo", redo);
 
+  print("Is moveNorth and CommandFunction? ${moveNorth is CommandFunction}.");
+
   var btnSayHi = new Button("Hi!", (){ robot.say("Hi!"); });
   var btnScare = new Button("Scare Robot", (){ robot.say("Ahhhhh!"); });
   var btnTease = new Button("Tease Robot", beSad);

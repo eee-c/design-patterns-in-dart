@@ -10,7 +10,7 @@ final rand = new Random(3);
 // Invoker
 class Button {
   String name;
-  Function command;
+  CommandFunction command;
   Button(this.name, this.command);
 
   void press() {
@@ -28,8 +28,8 @@ class History {
   factory History() => _h;
   History._internal();
 
-  static void add(Function c) {
-    if (!reflect(c).type.instanceMembers.containsKey(#undo)) return;
+  static void add(CommandFunction c) {
+    if (c is! UndoableCommand) return;
 
     _h._undoCommands.add(c);
   }
@@ -37,7 +37,7 @@ class History {
   void undo() {
     var h = _undoCommands.removeLast();
     print("Undoing $h");
-    h.undo();
+    h.undoCommand.call();
     _redoCommands.add(h);
   }
   void redo() {
@@ -47,7 +47,6 @@ class History {
     _undoCommands.add(h);
   }
 }
-
 
 class Robot {
   Camera camera;
@@ -88,8 +87,18 @@ class Camera {
   }
 }
 
+typedef void CommandFunction();
+
 abstract class Command implements Function {
   void call();
+}
+
+// abstract class UndoableCommand implements Command {
+//   void undo();
+// }
+
+abstract class UndoableCommand<C extends CommandFunction> implements Command {
+  C get undoCommand;
 }
 
 class SimpleCommand<T> implements Command {
@@ -102,35 +111,35 @@ class SimpleCommand<T> implements Command {
   }
 }
 
-class MoveNorthCommand implements Command {
+class MoveNorthCommand implements UndoableCommand {
   Robot robot;
   MoveNorthCommand(this.robot);
   void call() { robot.move(Direction.NORTH); }
-  void undo() { robot.move(Direction.SOUTH); }
+  UndoableCommand get undoCommand => new MoveSouthCommand(robot);
 }
 
-class MoveSouthCommand implements Command {
+class MoveSouthCommand implements UndoableCommand {
   Robot robot;
   MoveSouthCommand(this.robot);
   void call() { robot.move(Direction.SOUTH); }
-  void undo() { robot.move(Direction.NORTH); }
+  UndoableCommand get undoCommand => new MoveNorthCommand(robot);
 }
 
-class MoveEastCommand implements Command {
+class MoveEastCommand implements UndoableCommand {
   Robot robot;
   MoveEastCommand(this.robot);
   void call() { robot.move(Direction.EAST); }
-  void undo() { robot.move(Direction.WEST); }
+  UndoableCommand get undoCommand => new MoveWestCommand(robot);
 }
 
-class MoveWestCommand implements Command {
+class MoveWestCommand implements UndoableCommand {
   Robot robot;
   MoveWestCommand(this.robot);
   void call() { robot.move(Direction.WEST); }
-  void undo() { robot.move(Direction.EAST); }
+  UndoableCommand get undoCommand => new MoveEastCommand(robot);
 }
 
-class DanceHappyCommand implements Command {
+class DanceHappyCommand implements UndoableCommand {
   Robot robot;
   int _prevX, _prevY;
   DanceHappyCommand(this.robot);
@@ -146,7 +155,7 @@ class DanceHappyCommand implements Command {
       if (r==3) new MoveWestCommand(robot).call();
     }
   }
-  void undo() {
+  CommandFunction get undoCommand => (){
     var dir;
 
     dir = robot.x > _prevX ? Direction.WEST : Direction.EAST;
@@ -158,21 +167,21 @@ class DanceHappyCommand implements Command {
     while (robot.y != _prevY) {
       robot.move(dir);
     }
-  }
+  };
 }
 
-class StartRecordingCommand implements Command {
+class StartRecordingCommand implements UndoableCommand {
   Camera camera;
   StartRecordingCommand(this.camera);
   void call() { camera.startRecording(); }
-  void undo() { camera.stopRecording(); }
+  UndoableCommand get undoCommand => new StopRecordingCommand(camera);
 }
 
-class StopRecordingCommand implements Command {
+class StopRecordingCommand implements UndoableCommand {
   Camera camera;
   StopRecordingCommand(this.camera);
   void call() { camera.stopRecording(); }
-  void undo() { camera.startRecording(); }
+  UndoableCommand get undoCommand => new StartRecordingCommand(camera);
 }
 
 class UndoCommand implements Command {
