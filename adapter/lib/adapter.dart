@@ -8,9 +8,13 @@ class Target {
   }
 }
 
-class Adapter extends Adaptee implements Target {
+class Adapter implements Target {
+  Adaptee _adaptee;
+
+  Adapter(this._adaptee);
+
   void request() {
     print("[Adapter] doing stuff..");
-    specificRequest();
+    _adaptee.specificRequest();
   }
 }
