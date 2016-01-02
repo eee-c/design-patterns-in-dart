@@ -8,7 +8,7 @@ abstract class Ubot {
   Timer moveForward();
   Timer moveBackward();
   Timer moveLeft();
-  Timer mvoeRight();
+  Timer moveRight();
   void stop();
 }
 
@@ -23,7 +23,7 @@ class UbotRobot {
   Timer moveForward()  => _move(Direction.NORTH);
   Timer moveBackward() => _move(Direction.SOUTH);
   Timer moveLeft()     => _move(Direction.WEST);
-  Timer mvoeRight()    => _move(Direction.EAST);
+  Timer moveRight()    => _move(Direction.EAST);
 
   Timer _move(dir) {
     var t = new Timer.periodic(oneSecond, (_){ _robot.move(dir); });
