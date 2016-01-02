@@ -1,39 +1,42 @@
 library universal_remote;
 
-import 'dart:async';
-
 import 'robot.dart';
+import 'async_robot.dart';
 
 abstract class Ubot {
-  Timer moveForward();
-  Timer moveBackward();
-  Timer moveLeft();
-  Timer moveRight();
-  void stop();
+  void moveForward();
+  void moveBackward();
+  void moveLeft();
+  void moveRight();
 }
 
-const oneSecond = const Duration(seconds: 1);
-
 class UbotRobot {
-  Robot _robot;
-  List<Timer> _activeControls = [];
-
+  var _robot;
   UbotRobot(this._robot);
 
-  Timer moveForward()  => _move(Direction.NORTH);
-  Timer moveBackward() => _move(Direction.SOUTH);
-  Timer moveLeft()     => _move(Direction.WEST);
-  Timer moveRight()    => _move(Direction.EAST);
+  bool get isRobot => _robot is Robot;
+  bool get isBot   => _robot is Bot;
 
-  Timer _move(dir) {
-    var t = new Timer.periodic(oneSecond, (_){ _robot.move(dir); });
-    _activeControls.add(t);
-    return t;
+  String get location {
+    if (isRobot) return _robot.location;
+    if (isBot) return "${_robot.x}, ${_robot.y}";
+    return "";
   }
 
-  void stop() {
-    while (_activeControls.isNotEmpty) {
-      _activeControls.removeLast().cancel();
-    }
+  void moveForward() {
+    if (isRobot) _robot.move(Direction.NORTH);
+    if (isBot) _robot.goForward();
+  }
+  void moveBackward() {
+    if (isRobot) _robot.move(Direction.SOUTH);
+    if (isBot) _robot.goBackward();
+  }
+  void moveLeft() {
+    if (isRobot) _robot.move(Direction.WEST);
+    if (isBot) _robot.goLeft();
+  }
+  void moveRight() {
+    if (isRobot) _robot.move(Direction.EAST);
+    if (isBot) _robot.goRight();
   }
 }

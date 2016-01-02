@@ -1,8 +1,7 @@
 #!/usr/bin/env dart
 
-import 'dart:async';
-
 import 'package:adapter_code/robot.dart';
+import 'package:adapter_code/async_robot.dart';
 import 'package:adapter_code/universal_remote.dart';
 
 main() {
@@ -10,17 +9,14 @@ main() {
   var universalRobot = new UbotRobot(robot);
 
   print("Start moving the robot.");
+  universalRobot
+    ..moveForward()
+    ..moveForward()
+    ..moveForward()
+    ..moveForward()
+    ..moveForward();
+  print("The robot is now at: ${universalRobot.location}.");
 
-  var btnCtrl = universalRobot.moveForward();
-
-  // Simulate the button being release 10 seconds later...
-  new Timer(
-    new Duration(seconds: 10),
-    (){
-      btnCtrl.cancel();
-      print("The robot is now at: ${robot.location}.");
-    }
-  );
 
   // The non-adapted, procedural version of the code:
   // robot
