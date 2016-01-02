@@ -1,5 +1,7 @@
 library universal_remote;
 
+import 'dart:mirrors';
+
 import 'robot.dart';
 import 'async_robot.dart';
 
@@ -10,33 +12,45 @@ abstract class Ubot {
   void moveRight();
 }
 
-class UbotRobot {
+class UbotRobot implements Ubot {
   var _robot;
   UbotRobot(this._robot);
 
-  bool get isRobot => _robot is Robot;
-  bool get isBot   => _robot is Bot;
+  static Map<Type, Map> _registry = {
+    Robot: {
+      'forward':  [#move, [Direction.NORTH]],
+      'backward': [#move, [Direction.SOUTH]],
+      'left':     [#move, [Direction.WEST]],
+      'right':    [#move, [Direction.EAST]]
+    },
+    Bot: {
+      'forward':  [#goForward, []],
+      'backward': [#goBackward, []],
+      'left':     [#goLeft, []],
+      'right':    [#goRight, []]
+    }
+  };
 
   String get location {
-    if (isRobot) return _robot.location;
-    if (isBot) return "${_robot.x}, ${_robot.y}";
+    if (_robot is Robot) return _robot.location;
+    if (_robot is Bot) return "${_robot.x}, ${_robot.y}";
     return "";
   }
 
   void moveForward() {
-    if (isRobot) _robot.move(Direction.NORTH);
-    if (isBot) _robot.goForward();
+    var _ = _registry[_robot.runtimeType]['forward'];
+    reflect(_robot).invoke(_[0], _[1]);
   }
   void moveBackward() {
-    if (isRobot) _robot.move(Direction.SOUTH);
-    if (isBot) _robot.goBackward();
+    var _ = _registry[_robot.runtimeType]['backward'];
+    reflect(_robot).invoke(_[0], _[1]);
   }
   void moveLeft() {
-    if (isRobot) _robot.move(Direction.WEST);
-    if (isBot) _robot.goLeft();
+    var _ = _registry[_robot.runtimeType]['left'];
+    reflect(_robot).invoke(_[0], _[1]);
   }
   void moveRight() {
-    if (isRobot) _robot.move(Direction.EAST);
-    if (isBot) _robot.goRight();
+    var _ = _registry[_robot.runtimeType]['right'];
+    reflect(_robot).invoke(_[0], _[1]);
   }
 }
