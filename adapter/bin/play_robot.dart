@@ -9,7 +9,7 @@ main() {
   var bot = new Bot();
   var robot = new Robot();
 
-  universalRobot = new UbotRobot(robot);
+  universalRobot = new UniversalRemoteRobot(robot);
   print("Start moving the robot.");
   universalRobot
     ..moveForward()
@@ -17,11 +17,11 @@ main() {
     ..moveForward()
     ..moveForward()
     ..moveForward();
-  print("The robot is now at: ${universalRobot.location}.");
+  print("The robot is now at: ${universalRobot.xyLocation}.");
   print("");
   print("--");
 
-  universalRobot = new UbotRobot(bot);
+  universalRobot = new UniversalRemoteRobot(bot);
   print("Start moving the 'bot.");
   universalRobot
     ..moveForward()
@@ -29,7 +29,7 @@ main() {
     ..moveForward()
     ..moveForward()
     ..moveForward();
-  print("The robot is now at: ${universalRobot.location}.");
+  print("The robot is now at: ${universalRobot.xyLocation}.");
   print("");
 
 

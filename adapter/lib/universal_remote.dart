@@ -1,56 +1,66 @@
 library universal_remote;
 
-import 'dart:mirrors';
-
 import 'robot.dart';
 import 'async_robot.dart';
 
+/*** Target ***/
 abstract class Ubot {
+  String get xyLocation;
   void moveForward();
   void moveBackward();
   void moveLeft();
   void moveRight();
 }
 
-class UbotRobot implements Ubot {
-  var _robot;
-  UbotRobot(this._robot);
-
-  static Map<Type, Map> _registry = {
-    Robot: {
-      'forward':  [#move, [Direction.NORTH]],
-      'backward': [#move, [Direction.SOUTH]],
-      'left':     [#move, [Direction.WEST]],
-      'right':    [#move, [Direction.EAST]]
-    },
-    Bot: {
-      'forward':  [#goForward, []],
-      'backward': [#goBackward, []],
-      'left':     [#goLeft, []],
-      'right':    [#goRight, []]
-    }
-  };
-
-  String get location {
-    if (_robot is Robot) return _robot.location;
-    if (_robot is Bot) return "${_robot.x}, ${_robot.y}";
-    return "";
+/*** Delegate / Target ***/
+class UniversalRemoteRobot implements Ubot {
+  Ubot _ubot;
+  UniversalRemoteRobot(robot) {
+    if (robot is Robot) _ubot = new RobotAdapterToUbot(robot);
+    else if (robot is Bot) _ubot = new BotAdapterToUbot(robot);
+    else _ubot = new NullAdapterToUbot(robot);
   }
 
-  void moveForward() {
-    var _ = _registry[_robot.runtimeType]['forward'];
-    reflect(_robot).invoke(_[0], _[1]);
-  }
-  void moveBackward() {
-    var _ = _registry[_robot.runtimeType]['backward'];
-    reflect(_robot).invoke(_[0], _[1]);
-  }
-  void moveLeft() {
-    var _ = _registry[_robot.runtimeType]['left'];
-    reflect(_robot).invoke(_[0], _[1]);
-  }
-  void moveRight() {
-    var _ = _registry[_robot.runtimeType]['right'];
-    reflect(_robot).invoke(_[0], _[1]);
-  }
+  String get xyLocation => _ubot.xyLocation;
+
+  void moveForward()  { _ubot.moveForward(); }
+  void moveBackward() { _ubot.moveBackward(); }
+  void moveLeft()     { _ubot.moveLeft(); }
+  void moveRight()    { _ubot.moveRight(); }
+}
+
+/*** Adapters ***/
+class RobotAdapterToUbot implements Ubot {
+  Robot _robot;
+  RobotAdapterToUbot(this._robot);
+
+  String get xyLocation => _robot.location;
+
+  void moveForward()  { _robot.move(Direction.NORTH); }
+  void moveBackward() { _robot.move(Direction.SOUTH); }
+  void moveLeft()     { _robot.move(Direction.WEST); }
+  void moveRight()    { _robot.move(Direction.EAST); }
+}
+
+class BotAdapterToUbot implements Ubot {
+  Bot _bot;
+  BotAdapterToUbot(this._bot);
+
+  String get xyLocation => "${_bot.x}, ${_bot.y}";
+
+  void moveForward()  { _bot.goForward(); }
+  void moveBackward() { _bot.goBackward(); }
+  void moveLeft()     { _bot.goLeft(); }
+  void moveRight()    { _bot.goRight(); }
+}
+
+class NullAdapterToUbot implements Ubot {
+  NullAdapterToUbot(_);
+
+  String get xyLocation => "0, 0";
+
+  void moveForward()  {}
+  void moveBackward() {}
+  void moveLeft()     {}
+  void moveRight()    {}
 }
