@@ -1,7 +1,53 @@
 library universal_remote;
 
+import 'dart:async';
+
 import 'robot.dart';
 import 'async_robot.dart';
+
+/*** Delegate / Target ***/
+
+// class RunningCommand extends Timer {
+//   RunningCommand(Duration d, Function cb) { new super(d, cb); }
+//   RunningCommand.periodic(Duration d, Function cb): super.periodic(d, cb);
+//   bool get isActive => super.isActive;
+//   void cancel() { super.cancel(); }
+// }
+
+const oneSecond = const Duration(seconds: 1);
+
+class UniversalRemoteRobot {
+  Ubot _ubot;
+  List<Timer> _activeControls = [];
+
+  UniversalRemoteRobot(robot) { _delegateRobot(robot); }
+
+  void _delegateRobot(robot) {
+    if (robot is Robot) _ubot = new RobotAdapterToUbot(robot);
+    else if (robot is Bot) _ubot = new BotAdapterToUbot(robot);
+    else _ubot = new NullAdapterToUbot();
+  }
+
+  String get xyLocation => _ubot.xyLocation;
+
+  Timer moveForward()  => _executeControlledCommand(_ubot.moveForward);
+  Timer moveBackward() => _executeControlledCommand(_ubot.moveBackward);
+  Timer moveLeft()     => _executeControlledCommand(_ubot.moveLeft);
+  Timer moveRight()    => _executeControlledCommand(_ubot.moveRight);
+
+  Timer _executeControlledCommand(command) {
+    var t = new Timer.periodic(oneSecond, (_){ command(); });
+    _activeControls.add(t);
+    return t;
+  }
+
+  void stop() {
+    while (_activeControls.isNotEmpty) {
+      _activeControls.removeLast().cancel();
+    }
+  }
+}
+
 
 /*** Target ***/
 abstract class Ubot {
@@ -10,23 +56,6 @@ abstract class Ubot {
   void moveBackward();
   void moveLeft();
   void moveRight();
-}
-
-/*** Delegate / Target ***/
-class UniversalRemoteRobot implements Ubot {
-  Ubot _ubot;
-  UniversalRemoteRobot(robot) {
-    if (robot is Robot) _ubot = new RobotAdapterToUbot(robot);
-    else if (robot is Bot) _ubot = new BotAdapterToUbot(robot);
-    else _ubot = new NullAdapterToUbot(robot);
-  }
-
-  String get xyLocation => _ubot.xyLocation;
-
-  void moveForward()  { _ubot.moveForward(); }
-  void moveBackward() { _ubot.moveBackward(); }
-  void moveLeft()     { _ubot.moveLeft(); }
-  void moveRight()    { _ubot.moveRight(); }
 }
 
 /*** Adapters ***/
@@ -55,8 +84,6 @@ class BotAdapterToUbot implements Ubot {
 }
 
 class NullAdapterToUbot implements Ubot {
-  NullAdapterToUbot(_);
-
   String get xyLocation => "0, 0";
 
   void moveForward()  {}

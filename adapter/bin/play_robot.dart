@@ -1,44 +1,27 @@
 #!/usr/bin/env dart
 
+import 'dart:async';
+
 import 'package:adapter_code/robot.dart';
 import 'package:adapter_code/async_robot.dart';
 import 'package:adapter_code/universal_remote.dart';
 
 main() {
-  var universalRobot;
-  var bot = new Bot();
   var robot = new Robot();
+  // This works exactly the same:
+  // var robot = new Bot();
 
-  universalRobot = new UniversalRemoteRobot(robot);
-  print("Start moving the robot.");
-  universalRobot
-    ..moveForward()
-    ..moveForward()
-    ..moveForward()
-    ..moveForward()
-    ..moveForward();
-  print("The robot is now at: ${universalRobot.xyLocation}.");
-  print("");
-  print("--");
+  var universalRobot = new UniversalRemoteRobot(robot);
 
-  universalRobot = new UniversalRemoteRobot(bot);
-  print("Start moving the 'bot.");
-  universalRobot
-    ..moveForward()
-    ..moveForward()
-    ..moveForward()
-    ..moveForward()
-    ..moveForward();
-  print("The robot is now at: ${universalRobot.xyLocation}.");
-  print("");
+  print("Start moving $robot.");
+  var btnCtrl = universalRobot.moveForward();
 
-
-  // The non-adapted, procedural version of the code:
-  // robot
-  //   ..move(Direction.NORTH)
-  //   ..move(Direction.NORTH)
-  //   ..move(Direction.NORTH)
-  //   ..move(Direction.NORTH)
-  //   ..move(Direction.NORTH);
-  // print("The robot is now at: ${robot.location}.");
+  // Simulate releasing the button after 10 seconds...
+  new Timer(
+    new Duration(seconds: 10),
+    (){
+      btnCtrl.cancel();
+      print("The robot is now at: ${universalRobot.xyLocation}.");
+    }
+  );
 }
