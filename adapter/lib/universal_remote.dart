@@ -7,18 +7,21 @@ import 'async_robot.dart';
 
 /*** Delegate / Target ***/
 
-// class RunningCommand extends Timer {
-//   RunningCommand(Duration d, Function cb) { new super(d, cb); }
-//   RunningCommand.periodic(Duration d, Function cb): super.periodic(d, cb);
-//   bool get isActive => super.isActive;
-//   void cancel() { super.cancel(); }
-// }
-
 const oneSecond = const Duration(seconds: 1);
+
+class Runner {
+  Timer _t;
+  Runner(Function cb) {
+    _t = new Timer.periodic(oneSecond, (_){ cb(); });
+  }
+  bool get isActive => _t.isActive;
+  void cancel() { _t.cancel(); }
+}
+
 
 class UniversalRemoteRobot {
   Ubot _ubot;
-  List<Timer> _activeControls = [];
+  List<Runner> _activeControls = [];
 
   UniversalRemoteRobot(robot) { _delegateRobot(robot); }
 
@@ -30,16 +33,13 @@ class UniversalRemoteRobot {
 
   String get xyLocation => _ubot.xyLocation;
 
-  Timer moveForward()  => _executeControlledCommand(_ubot.moveForward);
-  Timer moveBackward() => _executeControlledCommand(_ubot.moveBackward);
-  Timer moveLeft()     => _executeControlledCommand(_ubot.moveLeft);
-  Timer moveRight()    => _executeControlledCommand(_ubot.moveRight);
+  Runner moveForward()  => _executeControlledCommand(_ubot.moveForward);
+  Runner moveBackward() => _executeControlledCommand(_ubot.moveBackward);
+  Runner moveLeft()     => _executeControlledCommand(_ubot.moveLeft);
+  Runner moveRight()    => _executeControlledCommand(_ubot.moveRight);
 
-  Timer _executeControlledCommand(command) {
-    var t = new Timer.periodic(oneSecond, (_){ command(); });
-    _activeControls.add(t);
-    return t;
-  }
+  Runner _executeControlledCommand(command) =>
+    (_activeControls..add(new Runner(command))).last;
 
   void stop() {
     while (_activeControls.isNotEmpty) {
