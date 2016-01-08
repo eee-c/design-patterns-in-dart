@@ -1,5 +1,7 @@
 library universal_remote;
 
+import 'dart:mirrors';
+
 import 'robot.dart';
 import 'async_robot.dart';
 
@@ -14,19 +16,16 @@ abstract class Ubot {
 
 /*** Delegate / Target ***/
 class UniversalRemoteRobot implements Ubot {
-  Ubot _ubot;
-  UniversalRemoteRobot(robot) {
-    if (robot is Robot) _ubot = new RobotAdapterToUbot(robot);
-    else if (robot is Bot) _ubot = new BotAdapterToUbot(robot);
-    else _ubot = new NullAdapterToUbot(robot);
+  var robot;
+  UniversalRemoteRobot(this.robot);
+
+  Ubot get _ubot {
+    if (robot is Robot) return new RobotAdapterToUbot(robot);
+    if (robot is Bot)   return new BotAdapterToUbot(robot);
+    return new NullAdapterToUbot(robot);
   }
 
-  String get xyLocation => _ubot.xyLocation;
-
-  void moveForward()  { _ubot.moveForward(); }
-  void moveBackward() { _ubot.moveBackward(); }
-  void moveLeft()     { _ubot.moveLeft(); }
-  void moveRight()    { _ubot.moveRight(); }
+   dynamic noSuchMethod(i) => reflect(_ubot).delegate(i);
 }
 
 /*** Adapters ***/
