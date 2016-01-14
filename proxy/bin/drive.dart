@@ -4,36 +4,32 @@ import 'dart:isolate';
 
 import 'package:proxy_code/car.dart';
 
-main() {
+main() async {
   var r = new ReceivePort();
   var receiveStream = r.asBroadcastStream();
 
-  ProxyCar car;
+  await Isolate.spawn(other, r.sendPort);
 
-  Isolate.
-    spawn(other, r.sendPort).
+  SendPort s = await receiveStream.first;
 
-    // Wait for isolate to be ready, then return first message, which is send
-    // port back to the isolate
-    then((_) => receiveStream.first).
+  // Create proxy car with receive stream and isolate send port
+  ProxyCar car = new ProxyCar(receiveStream, s);
 
-    // Create proxy car with receive stream and isolate send port
-    then((s) { car = new ProxyCar(receiveStream, s); }).
+  // Drive proxy car, then wait for state message
+  car.drive();
+  await receiveStream.first;
 
-    // Drive proxy car, then wait for state message
-    then((_) { car.drive(); }).
-    then((_) => receiveStream.first).
+  // Proxy car state is ready, so print
+  print("Car is ${car.state}");
 
-    // Proxy car state is ready, so print
-    then((_) { print("Car is ${car.state}"); }).
+  print("--");
 
-    // Stop proxy car, then wait for state message
-    then((_) { car.stop(); }).
-    then((_) => receiveStream.first).
+  // Stop proxy car, then wait for state message
+  car.stop();
+  await receiveStream.first;
 
-    // Proxy car state is ready, so print
-    then((_) { print("Car is ${car.state}"); });
-
+  // Proxy car state is ready, so print
+  print("Car is ${await car.state}");
 }
 
 other(SendPort s) {

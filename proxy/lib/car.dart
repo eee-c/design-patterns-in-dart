@@ -15,7 +15,7 @@ class Car implements Automobile {
   var _r;
   Car(this._r, this._s) {
     _r.listen((message) {
-      print(message);
+      print("[Car] $message");
       if (message == #drive) drive();
       if (message == #stop)  stop();
       _s.send(state);
@@ -42,5 +42,5 @@ class ProxyCar implements Automobile {
 
   String get state => _state;
   void drive() { _s.send(#drive); }
-  void stop() { _s.send(#stop); }
+  void stop()  { _s.send(#stop);  }
 }
