@@ -28,41 +28,65 @@ class AsyncCar implements AsyncAuto {
   SendPort _s;
   ReceivePort _r;
   Car _car;
+
   AsyncCar(this._r, this._s) {
     _car = new Car();
 
     _r.listen((message) {
       print("[AsyncCar] $message");
-      if (message == #drive) _car.drive();
-      if (message == #stop)  _car.stop();
-      _s.send(state);
+      if (message == #drive) drive();
+      if (message == #stop)  stop();
     });
   }
 
   String get state => _car.state;
-  Future drive() => new Future((){ _car.drive(); });
-  Future stop()  => new Future((){ _car.stop(); });
+  Future drive() => new Future((){
+    _car.drive();
+    _s.send(state);
+  });
+  Future stop() => new Future((){
+    _car.stop();
+    _s.send(state);
+  });
 }
 
 // Proxy Subject
 class ProxyCar implements AsyncAuto {
-  SendPort _s;
-  var _r;
   String _state = "???";
 
-  ProxyCar(this._r, this._s) {
-    _r.listen((message) {
-      print("[ProxyCar] $message");
-      _state = message;
-    });
+  SendPort _s;
+  ReceivePort _r;
+  Future _ready;
+  Stream _inStream;
+
+  ProxyCar() {
+    _establishCommunication();
   }
 
   String get state => _state;
   Future drive() => _send(#drive);
   Future stop()  => _send(#stop);
 
+  SendPort get sendPort => _r.sendPort;
+
+  Future get ready => _ready;
+
+  void _establishCommunication() {
+    _r = new ReceivePort();
+    _inStream = _r.asBroadcastStream();
+    _ready = _inStream.first.then((message){
+      _s = message;
+    });
+  }
+
   Future _send(message) {
+    var ret = _inStream.first.then((message) {
+      print("[ProxyCar] $message");
+      _state = message;
+    });
+
     _s.send(message);
-    return _r.first;
+
+    return ret;
   }
 }
