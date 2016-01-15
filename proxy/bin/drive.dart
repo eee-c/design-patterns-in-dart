@@ -16,8 +16,7 @@ main() async {
   ProxyCar car = new ProxyCar(receiveStream, s);
 
   // Drive proxy car, then wait for state message
-  car.drive();
-  await receiveStream.first;
+  await car.drive();
 
   // Proxy car state is ready, so print
   print("Car is ${car.state}");
@@ -25,8 +24,7 @@ main() async {
   print("--");
 
   // Stop proxy car, then wait for state message
-  car.stop();
-  await receiveStream.first;
+  await car.stop();
 
   // Proxy car state is ready, so print
   print("Car is ${await car.state}");
@@ -37,5 +35,5 @@ other(SendPort s) {
   var receiveStream = r.asBroadcastStream();
   s.send(r.sendPort);
 
-  new Car(receiveStream, s);
+  new AsyncCar(receiveStream, s);
 }

@@ -1,34 +1,51 @@
 library car;
 
+import 'dart:async';
 import 'dart:isolate';
 
-// Subject
 abstract class Automobile {
   String get state;
   void drive();
   void stop();
 }
 
-// Real Subject
+// Adaptee
 class Car implements Automobile {
-  SendPort _s;
-  var _r;
-  Car(this._r, this._s) {
-    _r.listen((message) {
-      print("[Car] $message");
-      if (message == #drive) drive();
-      if (message == #stop)  stop();
-      _s.send(state);
-    });
-  }
-
   String state = 'idle';
   void drive() { state = 'driving'; }
   void stop()  { state = 'idle'; }
 }
 
+// Subject
+abstract class AsyncAuto implements Automobile {
+  String get state;
+  void drive();
+  void stop();
+}
+
+// Real Subject & Adapter
+class AsyncCar implements AsyncAuto {
+  SendPort _s;
+  ReceivePort _r;
+  Car _car;
+  AsyncCar(this._r, this._s) {
+    _car = new Car();
+
+    _r.listen((message) {
+      print("[AsyncCar] $message");
+      if (message == #drive) _car.drive();
+      if (message == #stop)  _car.stop();
+      _s.send(state);
+    });
+  }
+
+  String get state => _car.state;
+  Future drive() => new Future((){ _car.drive(); });
+  Future stop()  => new Future((){ _car.stop(); });
+}
+
 // Proxy Subject
-class ProxyCar implements Automobile {
+class ProxyCar implements AsyncAuto {
   SendPort _s;
   var _r;
   String _state = "???";
@@ -41,6 +58,11 @@ class ProxyCar implements Automobile {
   }
 
   String get state => _state;
-  void drive() { _s.send(#drive); }
-  void stop()  { _s.send(#stop);  }
+  Future drive() => _send(#drive);
+  Future stop()  => _send(#stop);
+
+  Future _send(message) {
+    _s.send(message);
+    return _r.first;
+  }
 }
