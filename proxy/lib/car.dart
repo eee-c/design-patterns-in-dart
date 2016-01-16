@@ -52,41 +52,49 @@ class AsyncCar implements AsyncAuto {
 
 // Proxy Subject
 class ProxyCar implements AsyncAuto {
-  String _state = "???";
+  String state = "???";
 
-  SendPort _s;
-  ReceivePort _r;
-  Future _ready;
-  Stream _inStream;
+  Talker _t;
 
   ProxyCar() {
-    _establishCommunication();
+    _t = new Talker();
   }
 
-  String get state => _state;
   Future drive() => _send(#drive);
   Future stop()  => _send(#stop);
 
-  SendPort get sendPort => _r.sendPort;
+  SendPort get sendPort => _t.sendPort;
+  Future get ready => _t.ready;
 
-  Future get ready => _ready;
+  Future _send(message) =>
+    _t.
+      send(message).
+      then((response){
+        print("[ProxyCar] $response");
+        state = response;
+      });
+}
 
-  void _establishCommunication() {
+class Talker {
+  SendPort _s;
+  ReceivePort _r;
+  Stream _inStream;
+  Future ready;
+
+  Talker() {
     _r = new ReceivePort();
     _inStream = _r.asBroadcastStream();
-    _ready = _inStream.first.then((message){
+    ready = _inStream.first.then((message){
       _s = message;
     });
   }
 
-  Future _send(message) {
-    var ret = _inStream.first.then((message) {
-      print("[ProxyCar] $message");
-      _state = message;
-    });
+  // For others to talk to us
+  SendPort get sendPort => _r.sendPort;
 
+  Future send(message) {
     _s.send(message);
-
-    return ret;
+    return _inStream.first;
   }
+
 }
