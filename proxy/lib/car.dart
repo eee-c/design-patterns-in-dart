@@ -6,27 +6,37 @@ abstract class Automobile {
 }
 
 
-// Real Subject
+// Real Subjects
 class Car implements Automobile {
   void drive() {
     print("Car has been driven!");
   }
 }
 
+class Truck implements Automobile {
+  void drive() {
+    print("Truck has been driven!");
+  }
+}
+
+class Motorcycle implements Automobile {
+  void drive() {
+    print("Motorcycle has been driven!");
+  }
+}
+
 // Proxy Subject
-class ProxyCar implements Automobile {
+class ProxyAutomobile implements Automobile {
   Driver _driver;
-  Car _car;
+  Automobile _auto;
 
-  ProxyCar(this._driver);
-
-  Car get car => _car ??= new Car();
+  ProxyAutomobile(this._auto, this._driver);
 
   void drive() {
     if (_driver.age <= 16)
       throw new IllegalDriverException(_driver, "too young");
 
-    car.drive();
+    _auto.drive();
   }
 }
 
