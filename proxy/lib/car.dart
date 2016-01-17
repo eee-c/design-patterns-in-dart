@@ -40,5 +40,5 @@ class IllegalDriverException implements Exception {
   Driver driver;
   String message;
   IllegalDriverException(this.driver, this.message);
-  toString() => "$driver is $message!";
+  toString() => "IllegalDriverException: $driver is $message!";
 }
