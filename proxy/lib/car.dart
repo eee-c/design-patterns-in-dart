@@ -18,21 +18,27 @@ class ProxyCar implements Automobile {
   Driver _driver;
   Car _car;
 
-  ProxyCar(this._driver) {
-    _car = new Car();
-  }
+  ProxyCar(this._driver);
+
+  Car get car => _car ??= new Car();
 
   void drive() {
-    if (_driver.age <= 16) {
-      print("Sorry, the driver is too young to drive.");
-      return;
-    }
+    if (_driver.age <= 16)
+      throw new IllegalDriverException(_driver, "too young");
 
-    _car.drive();
+    car.drive();
   }
 }
 
 class Driver {
   int age;
   Driver(this.age);
+  toString() => "$age year-old driver";
+}
+
+class IllegalDriverException implements Exception {
+  Driver driver;
+  String message;
+  IllegalDriverException(this.driver, this.message);
+  toString() => "$driver is $message!";
 }
