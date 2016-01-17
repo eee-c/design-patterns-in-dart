@@ -1,10 +1,17 @@
 library car;
 
+import 'dart:mirrors';
+
 // Subject
 abstract class Automobile {
   void drive();
 }
 
+class IllegalAutomobileActionException implements Exception {
+  Symbol message;
+  IllegalAutomobileActionException(this.message);
+  toString() => "IllegalAutomobileActionException: $message";
+}
 
 // Real Subject
 class Car implements Automobile {
@@ -22,11 +29,13 @@ class ProxyCar implements Automobile {
 
   Car get car => _car ??= new Car();
 
-  void drive() {
+  dynamic noSuchMethod(i) {
+    if (i.memberName != #drive)
+      throw new IllegalAutomobileActionException(i.memberName);
     if (_driver.age <= 16)
       throw new IllegalDriverException(_driver, "too young");
 
-    car.drive();
+    return reflect(car).invoke(i.memberName, i.positionalArguments);
   }
 }
 
@@ -40,5 +49,5 @@ class IllegalDriverException implements Exception {
   Driver driver;
   String message;
   IllegalDriverException(this.driver, this.message);
-  toString() => "$driver is $message!";
+  toString() => "IllegalDriverException: $driver is $message!";
 }
