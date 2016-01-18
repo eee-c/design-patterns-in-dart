@@ -1,10 +1,11 @@
 library car;
 
+import 'dart:mirrors';
+
 // Subject
 abstract class Automobile {
   void drive();
 }
-
 
 // Real Subjects
 class Car implements Automobile {
@@ -28,15 +29,25 @@ class Motorcycle implements Automobile {
 // Proxy Subject
 class ProxyAutomobile implements Automobile {
   Driver _driver;
-  Automobile _auto;
+  Symbol _autoType;
 
-  ProxyAutomobile(this._auto, this._driver);
+  ProxyAutomobile(this._autoType, this._driver);
+
+  Automobile get auto => _autoMirror.reflectee;
+
+  InstanceMirror get _autoMirror =>
+    _classMirror.newInstance(new Symbol(''), []);
+
+  ClassMirror get _classMirror =>
+    currentMirrorSystem().
+      findLibrary(#car).
+      declarations[_autoType];
 
   void drive() {
     if (_driver.age <= 16)
       throw new IllegalDriverException(_driver, "too young");
 
-    _auto.drive();
+    auto.drive();
   }
 }
 

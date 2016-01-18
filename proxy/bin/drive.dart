@@ -8,15 +8,15 @@ main() {
   // Proxy will allow access to real subject
   driver = new Driver(25);
   print("== $driver here:");
-  new ProxyAutomobile(new Car(),        driver)..drive();
-  new ProxyAutomobile(new Truck(),      driver)..drive();
-  new ProxyAutomobile(new Motorcycle(), driver)..drive();
+  new ProxyAutomobile(#Car,        driver)..drive();
+  new ProxyAutomobile(#Truck,      driver)..drive();
+  new ProxyAutomobile(#Motorcycle, driver)..drive();
 
   print('');
 
   // Proxy will deny access to real subject
   driver = new Driver(16);
   print("== $driver here:");
-  new ProxyAutomobile(new Car(), new Driver(16))..drive();
+  new ProxyAutomobile(#Car, new Driver(16))..drive();
   print('');
 }
