@@ -26,12 +26,12 @@ abstract class AsyncAuto implements Automobile {
 // Real Subject & Adapter
 class AsyncCar implements AsyncAuto {
   SendPort _s;
-  ReceivePort _r;
+  Stream _in;
   Car _car;
-  AsyncCar(this._r, this._s) {
+  AsyncCar(this._s, this._in) {
     _car = new Car();
 
-    _r.listen((message) {
+    _in.listen((message) {
       print("[AsyncCar] $message");
       if (message == #drive) _car.drive();
       if (message == #stop)  _car.stop();
@@ -47,11 +47,11 @@ class AsyncCar implements AsyncAuto {
 // Proxy Subject
 class ProxyCar implements AsyncAuto {
   SendPort _s;
-  var _r;
+  Stream _in;
   String _state = "???";
 
-  ProxyCar(this._r, this._s) {
-    _r.listen((message) {
+  ProxyCar(this._s, this._in) {
+    _in.listen((message) {
       print("[ProxyCar] $message");
       _state = message;
     });
@@ -63,6 +63,6 @@ class ProxyCar implements AsyncAuto {
 
   Future _send(message) {
     _s.send(message);
-    return _r.first;
+    return _in.first;
   }
 }

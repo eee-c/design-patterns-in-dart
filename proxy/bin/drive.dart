@@ -8,11 +8,11 @@ main() async {
   var mainIn = new ReceivePort();
   await Isolate.spawn(worker, mainIn.sendPort);
 
-  var inStream = mainIn.asBroadcastStream();
-  SendPort mainOut = await inStream.first;
+  var mainInStream = mainIn.asBroadcastStream();
+  SendPort mainOut = await mainInStream.first;
 
   // Create proxy car with receive stream and isolate send port
-  ProxyCar car = new ProxyCar(inStream, mainOut);
+  ProxyCar car = new ProxyCar(mainOut, mainInStream);
 
   // Drive proxy car, then wait for state message
   await car.drive();
@@ -33,6 +33,6 @@ worker(SendPort workerOut) {
   var workerIn = new ReceivePort();
   workerOut.send(workerIn.sendPort);
 
-  var inStream = workerIn.asBroadcastStream();
-  new AsyncCar(inStream, workerOut);
+  var workerInStream = workerIn.asBroadcastStream();
+  new AsyncCar(workerOut, workerInStream);
 }
