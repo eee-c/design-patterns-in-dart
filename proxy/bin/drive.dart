@@ -1,18 +1,18 @@
 #!/usr/bin/env dart
 
-import 'dart:isolate';
-
 import 'package:proxy_code/car.dart';
 
+import 'dart:async';
+
 main() async {
-  var mainIn = new ReceivePort();
-  await Isolate.spawn(worker, mainIn.sendPort);
+  var mainOut = new StreamController.broadcast(),
+      mainIn = new StreamController.broadcast();
 
-  var mainInStream = mainIn.asBroadcastStream();
-  SendPort mainOut = await mainInStream.first;
+  // Create proxy car with send/receive streams
+  ProxyCar car = new ProxyCar(mainOut, mainIn);
 
-  // Create proxy car with receive stream and isolate send port
-  ProxyCar car = new ProxyCar(mainOut, mainInStream);
+  // Start "worker"
+  worker(mainIn, mainOut);
 
   // Drive proxy car, then wait for state message
   await car.drive();
@@ -29,10 +29,6 @@ main() async {
   print("Car is ${await car.state}");
 }
 
-worker(SendPort workerOut) {
-  var workerIn = new ReceivePort();
-  workerOut.send(workerIn.sendPort);
-
-  var workerInStream = workerIn.asBroadcastStream();
-  new AsyncCar(workerOut, workerInStream);
+worker(StreamController workerOut, StreamController workerIn) {
+  new AsyncCar(workerOut, workerIn);
 }

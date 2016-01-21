@@ -1,7 +1,6 @@
 library car;
 
 import 'dart:async';
-import 'dart:isolate';
 
 abstract class Automobile {
   String get state;
@@ -25,17 +24,17 @@ abstract class AsyncAuto implements Automobile {
 
 // Real Subject & Adapter
 class AsyncCar implements AsyncAuto {
-  SendPort _s;
-  Stream _in;
+  StreamController _out, _in;
   Car _car;
-  AsyncCar(this._s, this._in) {
+
+  AsyncCar(this._out, this._in) {
     _car = new Car();
 
-    _in.listen((message) {
+    _in.stream.listen((message) {
       print("[AsyncCar] $message");
       if (message == #drive) _car.drive();
       if (message == #stop)  _car.stop();
-      _s.send(state);
+      _out.add(state);
     });
   }
 
@@ -46,12 +45,11 @@ class AsyncCar implements AsyncAuto {
 
 // Proxy Subject
 class ProxyCar implements AsyncAuto {
-  SendPort _s;
-  Stream _in;
+  StreamController _out, _in;
   String _state = "???";
 
-  ProxyCar(this._s, this._in) {
-    _in.listen((message) {
+  ProxyCar(this._out, this._in) {
+    _in.stream.listen((message) {
       print("[ProxyCar] $message");
       _state = message;
     });
@@ -62,7 +60,7 @@ class ProxyCar implements AsyncAuto {
   Future stop()  => _send(#stop);
 
   Future _send(message) {
-    _s.send(message);
-    return _in.first;
+    _out.add(message);
+    return _in.stream.first;
   }
 }
