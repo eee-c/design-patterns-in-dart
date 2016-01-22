@@ -18,23 +18,23 @@ class Car implements Automobile {
 // Subject
 abstract class AsyncAuto implements Automobile {
   String get state;
-  void drive();
-  void stop();
+  Future drive();
+  Future stop();
 }
 
 // Real Subject & Adapter
 class AsyncCar implements AsyncAuto {
-  StreamController _out, _in;
+  Stream _socket;
   Car _car;
 
-  AsyncCar(this._out, this._in) {
+  AsyncCar(this._socket) {
     _car = new Car();
 
-    _in.stream.listen((message) {
-      print("[AsyncCar] $message");
-      if (message == #drive) _car.drive();
-      if (message == #stop)  _car.stop();
-      _out.add(state);
+    _socket.listen((message) {
+      print("[AsyncCar] received: $message");
+      if (message == 'drive') _car.drive();
+      if (message == 'stop')  _car.stop();
+      _socket.add(state);
     });
   }
 
@@ -45,22 +45,23 @@ class AsyncCar implements AsyncAuto {
 
 // Proxy Subject
 class ProxyCar implements AsyncAuto {
-  StreamController _out, _in;
-  String _state = "???";
+  Stream _socket, _broadcast;
+  String _state;
 
-  ProxyCar(this._out, this._in) {
-    _in.stream.listen((message) {
-      print("[ProxyCar] $message");
+  ProxyCar(this._socket) {
+    _broadcast = _socket.asBroadcastStream();
+    _broadcast.listen((message) {
+      // print("[ProxyCar] received: $message");
       _state = message;
     });
   }
 
   String get state => _state;
-  Future drive() => _send(#drive);
-  Future stop()  => _send(#stop);
+  Future drive() => _send('drive');
+  Future stop()  => _send('stop');
 
   Future _send(message) {
-    _out.add(message);
-    return _in.stream.first;
+    _socket.add(message);
+    return _broadcast.first;
   }
 }

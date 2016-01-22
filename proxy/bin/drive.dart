@@ -2,19 +2,16 @@
 
 import 'package:proxy_code/car.dart';
 
-import 'dart:async';
+import 'dart:io';
 
 main() async {
-  var mainOut = new StreamController.broadcast(),
-      mainIn = new StreamController.broadcast();
+  var socket = await WebSocket.connect('ws://localhost:4040/ws');
 
   // Create proxy car with send/receive streams
-  ProxyCar car = new ProxyCar(mainOut, mainIn);
-
-  // Start "worker"
-  worker(mainIn, mainOut);
+  ProxyCar car = new ProxyCar(socket);
 
   // Drive proxy car, then wait for state message
+  print("Attempting to drive remote car...");
   await car.drive();
 
   // Proxy car state is ready, so print
@@ -23,12 +20,9 @@ main() async {
   print("--");
 
   // Stop proxy car, then wait for state message
+  print("Attempting to stop remote car...");
   await car.stop();
 
   // Proxy car state is ready, so print
   print("Car is ${await car.state}");
-}
-
-worker(StreamController workerOut, StreamController workerIn) {
-  new AsyncCar(workerOut, workerIn);
 }
