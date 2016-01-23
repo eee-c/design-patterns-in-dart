@@ -5,14 +5,13 @@ import 'package:proxy_code/car.dart';
 import 'dart:async';
 
 main() async {
-  var mainOut = new StreamController.broadcast(),
-      mainIn = new StreamController.broadcast();
+  var socket = new StreamController.broadcast();
 
   // Create proxy car with send/receive streams
-  ProxyCar car = new ProxyCar(mainOut, mainIn);
+  ProxyCar car = new ProxyCar(socket);
 
   // Start "worker"
-  worker(mainIn, mainOut);
+  worker(socket);
 
   // Drive proxy car, then wait for state message
   await car.drive();
@@ -29,6 +28,6 @@ main() async {
   print("Car is ${await car.state}");
 }
 
-worker(StreamController workerOut, StreamController workerIn) {
-  new AsyncCar(workerOut, workerIn);
+worker(StreamController socket) {
+  new AsyncCar(socket);
 }

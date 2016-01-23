@@ -24,17 +24,17 @@ abstract class AsyncAuto implements Automobile {
 
 // Real Subject & Adapter
 class AsyncCar implements AsyncAuto {
-  StreamController _out, _in;
+  StreamController _socket;
   Car _car;
 
-  AsyncCar(this._out, this._in) {
+  AsyncCar(this._socket) {
     _car = new Car();
 
-    _in.stream.listen((message) {
+    _socket.stream.where((m)=> m is! String).listen((message) {
       print("[AsyncCar] $message");
       if (message == #drive) _car.drive();
       if (message == #stop)  _car.stop();
-      _out.add(state);
+      _socket.add(state);
     });
   }
 
@@ -45,11 +45,11 @@ class AsyncCar implements AsyncAuto {
 
 // Proxy Subject
 class ProxyCar implements AsyncAuto {
-  StreamController _out, _in;
+  StreamController _socket;
   String _state = "???";
 
-  ProxyCar(this._out, this._in) {
-    _in.stream.listen((message) {
+  ProxyCar(this._socket) {
+    _socket.stream.where((m)=> m is! Symbol).listen((message) {
       print("[ProxyCar] $message");
       _state = message;
     });
@@ -60,7 +60,7 @@ class ProxyCar implements AsyncAuto {
   Future stop()  => _send(#stop);
 
   Future _send(message) {
-    _out.add(message);
-    return _in.stream.first;
+    _socket.add(message);
+    return _socket.stream.first;
   }
 }
