@@ -1,8 +1,8 @@
 #!/usr/bin/env dart
 
-import 'package:proxy_code/car.dart';
+import 'dart:io' show WebSocket;
 
-import 'dart:io';
+import 'package:proxy_code/car.dart';
 
 main() async {
   var socket = await WebSocket.connect('ws://localhost:4040/ws');

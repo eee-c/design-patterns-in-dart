@@ -1,21 +1,19 @@
 library car;
 
 import 'dart:async' show Future, Stream;
-import 'dart:io' show WebSocket;
+import 'dart:html' show WebSocket;
 
 import 'interface.dart';
 
 // Proxy Subject
 class ProxyCar implements AsyncAuto {
   WebSocket _socket;
-  Stream _broadcast;
   String _state;
 
   ProxyCar(this._socket) {
-    _broadcast = _socket.asBroadcastStream();
-    _broadcast.listen((message) {
+    _socket.onMessage.listen((e) {
       // print("[ProxyCar] received: $message");
-      _state = message;
+      _state = e.data;
     });
   }
 
@@ -24,7 +22,7 @@ class ProxyCar implements AsyncAuto {
   Future stop()  => _send('stop');
 
   Future _send(message) {
-    _socket.add(message);
-    return _broadcast.first;
+    _socket.send(message);
+    return _socket.onMessage.first;
   }
 }
