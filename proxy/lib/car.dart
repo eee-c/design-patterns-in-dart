@@ -1,6 +1,6 @@
 library car;
 
-import 'dart:mirrors';
+import 'dart:mirrors' show reflect;
 
 // Subject
 abstract class Automobile {
@@ -35,7 +35,7 @@ class ProxyCar implements Automobile {
     if (_driver.age <= 16)
       throw new IllegalDriverException(_driver, "too young");
 
-    return reflect(car).invoke(i.memberName, i.positionalArguments);
+    return reflect(car).delegate(i);
   }
 }
 
