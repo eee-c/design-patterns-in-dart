@@ -21,13 +21,11 @@ class Car implements Automobile {
 }
 
 // Proxy Subject
-class ProxyCar implements Automobile {
-  Driver _driver;
-  Car _car;
+class ProxyProtect {
+  final Driver _driver;
+  final _realSubject;
 
-  ProxyCar(this._driver);
-
-  Car get car => _car ??= new Car();
+  ProxyProtect(this._driver, this._realSubject);
 
   dynamic noSuchMethod(i) {
     if (i.memberName != #drive)
@@ -35,7 +33,7 @@ class ProxyCar implements Automobile {
     if (_driver.age <= 16)
       throw new IllegalDriverException(_driver, "too young");
 
-    return reflect(car).delegate(i);
+    return reflect(_realSubject).delegate(i);
   }
 }
 
