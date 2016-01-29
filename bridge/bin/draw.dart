@@ -29,23 +29,18 @@ class DrawingApi2 implements DrawingApi {
 
 // Abstraction
 abstract class Shape {
-  DrawingApi _drawingApi;
-
-  Shape(this._drawingApi);
-
   void draw();                         // low-level
   void resizeByPercentage(double pct); // high-level
 }
 
 // Refined Abstraction
-class Circle extends Shape {
+class Circle extends Shape with DrawingApi1 {
   double _x, _y, _radius;
-  Circle(this._x, this._y, this._radius, DrawingApi api) :
-    super(api);
+  Circle(this._x, this._y, this._radius);
 
   // low-level i.e. Implementation specific
   void draw() {
-    _drawingApi.drawCircle(_x, _y, _radius);
+    drawCircle(_x, _y, _radius);
   }
   // high-level i.e. Abstraction specific
   void resizeByPercentage(double pct) {
@@ -56,8 +51,8 @@ class Circle extends Shape {
 // Client
 main() {
   List<Shape> shapes = [
-    new Circle(1.0, 2.0, 3.0, new DrawingApi1()),
-    new Circle(5.0, 7.0, 11.0, new DrawingApi2())
+    new Circle(1.0, 2.0, 3.0),
+    new Circle(5.0, 7.0, 11.0)
   ];
 
   shapes.forEach((shape){
