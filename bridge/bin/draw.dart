@@ -1,5 +1,7 @@
 #!/usr/bin/env dart
 
+import 'dart:mirrors' show reflectClass;
+
 // Implementor
 abstract class DrawingApi {
   void drawCircle(double x, double y, double radius);
@@ -7,6 +9,10 @@ abstract class DrawingApi {
 
 // Concrete Implementor 1
 class DrawingApi1 implements DrawingApi {
+  static final DrawingApi1 _drawingApi = new DrawingApi1._internal();
+  factory DrawingApi1()=> _drawingApi;
+  DrawingApi1._internal();
+
   void drawCircle(double x, double y, double radius) {
     print(
       "[DrawingApi1] "
@@ -30,8 +36,16 @@ class DrawingApi2 implements DrawingApi {
 // Abstraction
 abstract class Shape {
   DrawingApi _drawingApi;
+  static Map<Type, DrawingApi> _drawingApiCache = {};
 
-  Shape(this._drawingApi);
+  Shape(Type drawingApi) {
+    _drawingApi = _drawingApiCache.putIfAbsent(
+      drawingApi,
+      ()=> reflectClass(drawingApi).newInstance(new Symbol(''), []).reflectee
+    );
+  }
+
+  void reset() { _drawingApiCache.clear(); }
 
   void draw();                         // low-level
   void resizeByPercentage(double pct); // high-level
@@ -40,8 +54,8 @@ abstract class Shape {
 // Refined Abstraction
 class Circle extends Shape {
   double _x, _y, _radius;
-  Circle(this._x, this._y, this._radius, DrawingApi api) :
-    super(api);
+  Circle(this._x, this._y, this._radius, Type drawingApi) :
+    super(drawingApi);
 
   // low-level i.e. Implementation specific
   void draw() {
@@ -56,8 +70,13 @@ class Circle extends Shape {
 // Client
 main() {
   List<Shape> shapes = [
-    new Circle(1.0, 2.0, 3.0, new DrawingApi1()),
-    new Circle(5.0, 7.0, 11.0, new DrawingApi2())
+    new Circle(1.0, 2.0, 3.0, DrawingApi1),
+    new Circle(0.0, 6.0, 1.0, DrawingApi1),
+    new Circle(2.0, 2.0, 1.5, DrawingApi1),
+    new Circle(5.0, 7.0, 11.0, DrawingApi2),
+    new Circle(1.0, 2.0, 3.0, DrawingApi1),
+    new Circle(5.0, -7.0, 1.0, DrawingApi2),
+    new Circle(-1.0, -2.0, 5.0, DrawingApi1)
   ];
 
   shapes.forEach((shape){
