@@ -1,3 +1,5 @@
 name: bridge_code
+dependencies:
+  http_server: any
 dev_dependencies:
   test: any
