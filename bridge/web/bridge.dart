@@ -64,10 +64,37 @@ abstract class Messenger {
 // Refined Abstraction
 class WebMessenger extends Messenger {
   InputElement _messageElement;
-  WebMessenger(this._messageElement) : super(new HttpCommunication());
+  List _history = [];
+
+  WebMessenger(this._messageElement) :
+    super(new HttpCommunication());
 
   void updateStatus() {
     comm.send(message);
+    _log(message);
+    _maybeChangeCommunication();
+  }
+
+  void _log(message) {
+    _history.add([new DateTime.now(), message]);
+  }
+
+  _maybeChangeCommunication() {
+    if (_history.length < 3) return;
+
+    var last = _history.length - 1,
+      dateOld = _history[last-2][0],
+      dateNew = _history[last][0],
+      diff = dateNew.difference(dateOld);
+
+    if (diff.inSeconds < 10) {
+      if (comm is! WebSocketCommunication)
+        comm = new WebSocketCommunication();
+    }
+    else {
+      if (comm is! HttpCommunication)
+        comm = new HttpCommunication();
+    }
   }
 
   String get message => _messageElement.value;
