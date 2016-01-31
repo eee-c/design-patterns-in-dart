@@ -3,12 +3,12 @@ import 'dart:html';
 import 'dart:async' show Completer;
 
 main() {
-  var message = new FormMessage(query('#message'));
+  var message = new WebMessenger(query('#message'));
 
   query('#save').
     onClick.
     listen((_){
-      message.send();
+      message.updateStatus();
     });
 
   queryAll('[name=implementor]').
@@ -16,30 +16,30 @@ main() {
     listen((e) {
       var input = e.target;
       if (!input.checked) return;
-      print(input);
+
       if (input.value == 'http')
-        message.comm = new HttpCommunicator();
+        message.comm = new HttpCommunication();
       else
-        message.comm = new WebSocketCommunicator();
+        message.comm = new WebSocketCommunication();
     });
 }
 
 // Implementor
-abstract class Communicator {
-  void save(String message);
+abstract class Communication {
+  void send(String message);
 }
 
 // Concrete Implementor 1
-class HttpCommunicator implements Communicator {
-  void save(message) {
-    HttpRequest.postFormData('/save', {'message': message});
+class HttpCommunication implements Communication {
+  void send(message) {
+    HttpRequest.postFormData('/status', {'message': message});
   }
 }
 
 // Concrete Implementor 2
-class WebSocketCommunicator implements Communicator {
+class WebSocketCommunication implements Communication {
   WebSocket _socket;
-  WebSocketCommunicator() { _startSocket(); }
+  WebSocketCommunication() { _startSocket(); }
 
   _startSocket() async {
     _socket = new WebSocket('ws://localhost:4040/ws');
@@ -49,25 +49,25 @@ class WebSocketCommunicator implements Communicator {
     await _c.future;
   }
 
-  void save(message) {
-    _socket.send(message);
+  void send(message) {
+    _socket.send("message=$message");
   }
 }
 
 // Abstraction
-abstract class Message {
-  Communicator comm;
-  Message(this.comm);
-  void send();
+abstract class Messenger {
+  Communication comm;
+  Messenger(this.comm);
+  void updateStatus();
 }
 
 // Refined Abstraction
-class FormMessage extends Message {
-  Element _messageElement;
-  FormMessage(this._messageElement) : super(new HttpCommunicator());
+class WebMessenger extends Messenger {
+  InputElement _messageElement;
+  WebMessenger(this._messageElement) : super(new HttpCommunication());
 
-  void send() {
-    comm.save(message);
+  void updateStatus() {
+    comm.send(message);
   }
 
   String get message => _messageElement.value;

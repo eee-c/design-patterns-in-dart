@@ -14,8 +14,8 @@ main() {
     await for (var req in server) {
       if (req.uri.path == '/ws')
         establishWebSocket(req);
-      else if (req.uri.path == '/save' && req.method == 'POST')
-        save(req);
+      else if (req.uri.path == '/status' && req.method == 'POST')
+        updateStatus(req);
       else
         staticFiles.serveRequest(req);
     }
@@ -31,7 +31,7 @@ establishWebSocket(req) async {
   });
 }
 
-save(req) async {
+updateStatus(req) async {
   var message = await req.transform(UTF8.decoder).join();
   print("[HTTP] $message");
 }
