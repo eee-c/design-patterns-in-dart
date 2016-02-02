@@ -1,9 +1,11 @@
 import 'dart:html';
 
 import 'dart:async' show Completer;
+import 'dart:math' show Random;
 
 main() {
   var message = new WebMessenger(query('#message'));
+    // ..comm = new HttpCommunication();
 
   query('#save').
     onClick.
@@ -26,6 +28,8 @@ main() {
 
 // Implementor
 abstract class Communication {
+  factory Communication() => new Random().nextBool() ?
+    new WebSocketCommunication() : new HttpCommunication();
   void send(String message);
 }
 
@@ -39,7 +43,7 @@ class HttpCommunication implements Communication {
 // Concrete Implementor 2
 class WebSocketCommunication implements Communication {
   WebSocket _socket;
-  WebSocketCommunication() { _startSocket(); }
+  WebSocketCommunication() { print('yi'); _startSocket(); }
 
   _startSocket() async {
     _socket = new WebSocket('ws://localhost:4040/ws');
@@ -57,14 +61,15 @@ class WebSocketCommunication implements Communication {
 // Abstraction
 abstract class Messenger {
   Communication comm;
-  Messenger(this.comm);
+  Messenger() : comm = new Communication();
+
   void updateStatus();
 }
 
 // Refined Abstraction
 class WebMessenger extends Messenger {
   InputElement _messageElement;
-  WebMessenger(this._messageElement) : super(new HttpCommunication());
+  WebMessenger(this._messageElement);
 
   void updateStatus() {
     comm.send(message);
