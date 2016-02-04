@@ -43,7 +43,7 @@ class HttpCommunication implements Communication {
 // Concrete Implementor 2
 class WebSocketCommunication implements Communication {
   WebSocket _socket;
-  WebSocketCommunication() { print('yi'); _startSocket(); }
+  WebSocketCommunication() { _startSocket(); }
 
   _startSocket() async {
     _socket = new WebSocket('ws://localhost:4040/ws');
