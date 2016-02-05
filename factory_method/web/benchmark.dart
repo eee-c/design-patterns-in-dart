@@ -1,5 +1,5 @@
 import 'package:benchmark_harness/benchmark_harness.dart';
-import 'package:factory_method_code/factory_method.dart' as Subclass;
+import 'package:factory_method_code/alt/classic/factory_method.dart' as Subclass;
 import 'package:factory_method_code/alt/map_of_factories/factory_method.dart' as MapOfFactories;
 import 'package:factory_method_code/alt/mirrors/factory_method.dart' as Mirrors;
 

@@ -2,7 +2,7 @@
 
 import 'package:dpid_benchmarking/pattern_benchmark.dart';
 
-import 'package:factory_method_code/factory_method.dart';
+import 'package:factory_method_code/alt/classic/factory_method.dart';
 
 main(List<String> args) {
   BenchmarkRunner.main(
