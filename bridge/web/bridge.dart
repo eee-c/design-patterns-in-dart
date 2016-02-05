@@ -54,17 +54,11 @@ class WebSocketCommunication implements Communication {
   }
 }
 
-// Abstraction
-abstract class Messenger {
+// Degenerate Abstraction
+class WebMessenger  {
   Communication comm;
-  Messenger(this.comm);
-  void updateStatus();
-}
-
-// Refined Abstraction
-class WebMessenger extends Messenger {
   InputElement _messageElement;
-  WebMessenger(this._messageElement) : super(new HttpCommunication());
+  WebMessenger(this._messageElement) : comm = new HttpCommunication();
 
   void updateStatus() {
     comm.send(message);
