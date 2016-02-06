@@ -6,6 +6,7 @@ import 'dart:math' show Random;
 class GameFactory {
   String playerOne, playerTwo;
   GameFactory(this.playerOne, this.playerTwo);
+  void start() { print(this); }
   String toString() => "*** $playerOne vs. $playerTwo ***";
 
   // The factory method
@@ -20,11 +21,13 @@ class GameFactory {
 class BoardGame {
   List playerOnePieces = [];
   List playerTwoPieces = [];
+  void play() { print(this); }
   String get winner => new Random().nextBool() ? "Player One" : "Player Two";
   String toString() =>
     "  ${this.runtimeType}\n"
-    "    Player One has: ${playerOnePieces.join(', ')}\n"
-    "    Player Two has: ${playerTwoPieces.join(', ')}\n"
+    "    Player One starts with: ${playerOnePieces.join(', ')}\n"
+    "    Player Two starts with: ${playerTwoPieces.join(', ')}\n"
+    "    --\n"
     "    Winner: $winner\n";
 }
 
@@ -50,15 +53,10 @@ class ThermoNuclearWar extends BoardGame {
 
 main() {
   var series = new GameFactory('Professor Falken', 'Joshua');
-  print(series);
 
-  var game;
-  game = series.createBoardGame('Checkers');
-  print(game);
-
-  game = series.createBoardGame('Thermo Nuclear War');
-  print(game);
-
-  game = series.createBoardGame();
-  print(game);
+  series
+    ..start()
+    ..createBoardGame('Checkers').play()
+    ..createBoardGame('Thermo Nuclear War').play()
+    ..createBoardGame().play();
 }
