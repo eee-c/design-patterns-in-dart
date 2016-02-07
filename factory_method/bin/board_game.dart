@@ -1,5 +1,6 @@
 #!/usr/bin/env dart
 
+import 'dart:collection' show ListBase;
 import 'dart:math' show Random;
 
 // Creator
@@ -17,10 +18,15 @@ class GameFactory {
   }
 }
 
-// Product
-class BoardGame {
-  List playerOnePieces = [];
-  List playerTwoPieces = [];
+// Product *and* Creator
+abstract class BoardGame {
+  GamePieces playerOnePieces, playerTwoPieces;
+  BoardGame() {
+    playerOnePieces = _createPieces();
+    playerTwoPieces = _createPieces();
+  }
+  GamePieces _createPieces();
+
   void play() { print(this); }
   String get winner => new Random().nextBool() ? "Player One" : "Player Two";
   String toString() =>
@@ -32,23 +38,42 @@ class BoardGame {
 }
 
 class ChessGame extends BoardGame {
-  List playerOnePieces = [
-    '1 king', '1 queen', '2 rooks', '2 bishops', '2 knights', '8 pawns'
-  ];
-  List playerTwoPieces = [
-    '1 king', '1 queen', '2 rooks', '2 bishops', '2 knights', '8 pawns'
-  ];
+  GamePieces _createPieces() => new ChessPieces();
 }
 
 class CheckersGame extends BoardGame {
-  List playerOnePieces = [ '12 pieces' ];
-  List playerTwoPieces = [ '12 pieces' ];
+  GamePieces _createPieces() => new CheckersPieces();
 }
 
 class ThermoNuclearWar extends BoardGame {
-  List playerOnePieces = [ '1,000 warheads' ];
-  List playerTwoPieces = [ '1,000 warheads' ];
+  GamePieces _createPieces() => new ThermoNuclearPieces();
   String get winner => "None";
+}
+
+class GamePieces extends ListBase {
+  List<String> pieces = [];
+  int get length => pieces.length;
+  void set length(int i) { pieces.length = i; }
+  operator [](int i)=> pieces[i];
+  operator []=(int i, String other) { pieces[i] = other; }
+  String toString() => pieces.join(', ');
+}
+
+class ThermoNuclearPieces extends GamePieces {
+  List<String> pieces = [];
+  ThermoNuclearPieces() : pieces = ['1,000 warheads'];
+}
+
+class CheckersPieces extends GamePieces {
+  List<String> pieces = [];
+  CheckersPieces() : pieces = ['12 pieces'];
+}
+
+class ChessPieces extends GamePieces {
+  List<String> pieces = [];
+  ChessPieces() : pieces = [
+      '1 king', '1 queen', '2 rooks', '2 bishops', '2 knights', '8 pawns'
+    ];
 }
 
 main() {
