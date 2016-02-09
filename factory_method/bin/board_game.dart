@@ -1,6 +1,7 @@
 #!/usr/bin/env dart
 
 import 'dart:math' show Random;
+import 'dart:mirrors' show reflectClass, ClassMirror;
 
 // Creator
 class GameFactory {
@@ -10,10 +11,10 @@ class GameFactory {
   String toString() => "*** $playerOne vs. $playerTwo ***";
 
   // The factory method
-  BoardGame createBoardGame([String game]) {
-    if (game == 'Checkers') return new CheckersGame();
-    if (game == 'Thermo Nuclear War') return new ThermoNuclearWar();
-    return new ChessGame();
+  ClassMirror boardGameClass([String game]) {
+    if (game == 'Checkers') return reflectClass(CheckersGame);
+    if (game == 'Thermo Nuclear War') return reflectClass(ThermoNuclearWar);
+    return reflectClass(ChessGame);
   }
 }
 
@@ -48,15 +49,50 @@ class CheckersGame extends BoardGame {
 class ThermoNuclearWar extends BoardGame {
   List playerOnePieces = [ '1,000 warheads' ];
   List playerTwoPieces = [ '1,000 warheads' ];
+  ThermoNuclearWar(): super();
+  ThermoNuclearWar.withWarheads(this.playerOnePieces, this.playerTwoPieces);
   String get winner => "None";
 }
 
 main() {
   var series = new GameFactory('Professor Falken', 'Joshua');
+  series.start();
 
-  series
-    ..start()
-    ..createBoardGame('Checkers').play()
-    ..createBoardGame('Thermo Nuclear War').play()
-    ..createBoardGame().play();
+  var game;
+  game = series.
+    boardGameClass('Checkers').
+    newInstance(new Symbol(''), []).
+    reflectee;
+  game.play();
+
+  game = series.
+    boardGameClass('Thermo Nuclear War').
+    newInstance(new Symbol(''), []).
+    reflectee;
+  game.play();
+
+  game = series.
+    boardGameClass('Thermo Nuclear War').
+    newInstance(
+      new Symbol('withWarheads'),
+      [['1 warhead'], ['1 warhead']]
+    ).
+    reflectee;
+  game.play();
+
+  game = series.
+    boardGameClass('Thermo Nuclear War').
+    newInstance(
+      new Symbol('withWarheads'),
+      [['1 warhead'], ['1,000 warheads']]
+    ).
+    reflectee;
+  game.play();
+
+  // Defaults to a nice game of chess
+  game = series.
+    boardGameClass().
+    newInstance(new Symbol(''), []).
+    reflectee;
+  game.play();
 }
