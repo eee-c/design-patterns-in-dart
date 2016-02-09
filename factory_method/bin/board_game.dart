@@ -3,6 +3,7 @@
 import 'dart:math' show Random;
 
 // Creator
+@proxy
 class GameFactory {
   String playerOne, playerTwo;
   GameFactory(this.playerOne, this.playerTwo);
@@ -10,7 +11,7 @@ class GameFactory {
   String toString() => "*** $playerOne vs. $playerTwo ***";
 
   // The factory method
-  BoardGame createBoardGame([String game]) {
+  factory GameFactory.createBoardGame([String game]) {
     if (game == 'Checkers') return new CheckersGame();
     if (game == 'Thermo Nuclear War') return new ThermoNuclearWar();
     return new ChessGame();
@@ -53,10 +54,9 @@ class ThermoNuclearWar extends BoardGame {
 
 main() {
   var series = new GameFactory('Professor Falken', 'Joshua');
+  series.start();
 
-  series
-    ..start()
-    ..createBoardGame('Checkers').play()
-    ..createBoardGame('Thermo Nuclear War').play()
-    ..createBoardGame().play();
+  new GameFactory.createBoardGame('Checkers').play();
+  new GameFactory.createBoardGame('Thermo Nuclear War').play();
+  new GameFactory.createBoardGame().play();
 }
