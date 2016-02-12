@@ -1,7 +1,13 @@
 name: factory_method_code
 dependencies:
   browser: any
+  polymer: ">=0.15.1 <0.17.0"
+  paper_elements: ">=0.7.0 <0.8.0"
 dev_dependencies:
   dpid_benchmarking:
     path: ../packages/benchmarking
   benchmark_harness: any
+transformers:
+- polymer:
+    entry_points:
+    - web/index.html

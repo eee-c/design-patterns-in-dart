@@ -1,6 +1,9 @@
 import 'dart:html';
 import 'dart:math' show Random;
 
+import 'package:polymer/polymer.dart';
+import 'package:paper_elements/paper_input.dart';
+
 abstract class FormBuilder {
   Element container;
   FormBuilder(this.container);
@@ -8,10 +11,11 @@ abstract class FormBuilder {
     var input = _labelFor(inputElement);
     container.append(input);
   }
-  InputElement get inputElement;
+  HtmlElement get inputElement;
   _labelFor(el) {
+    var text = (el is InputElement) ? el.type : el.toString();
     var label = new LabelElement()
-      ..appendText("${el.type}: ")
+      ..appendText("$text: ")
       ..append(el);
 
     return new ParagraphElement()..append(label);
@@ -20,20 +24,23 @@ abstract class FormBuilder {
 
 class RandomBuilder extends FormBuilder {
   RandomBuilder(el): super(el);
-  InputElement get inputElement {
-    var rand = new Random().nextInt(6);
+  Element get inputElement {
+    var rand = new Random().nextInt(7);
 
     if (rand == 0) return new WeekInputElement();
     if (rand == 1) return new NumberInputElement();
     if (rand == 2) return new TelephoneInputElement();
     if (rand == 3) return new UrlInputElement();
     if (rand == 4) return new TimeInputElement();
+    if (rand == 5) return new PaperInput();
 
     return new TextInputElement();
   }
 }
 
-main(){
+main() async {
+  await initPolymer();
+
   var container = query('#inputs');
 
   var button = new ButtonElement()
