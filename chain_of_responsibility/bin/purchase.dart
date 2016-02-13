@@ -1,14 +1,15 @@
 #!/usr/bin/env dart
 
 abstract class PurchasePower {
-  PurchasePower _successor;
-  void set successor(PurchasePower successor) {
-    _successor = successor;
+  // Successor in the chain of responsibility
+  PurchasePower _reportsTo;
+  void set reportsTo(PurchasePower reportsTo) {
+    _reportsTo = reportsTo;
   }
 
   void processRequest(PurchaseRequest request) {
-    if (_successor != null) {
-      _successor.processRequest(request);
+    if (_reportsTo != null) {
+      _reportsTo.processRequest(request);
     }
   }
 }
@@ -75,9 +76,9 @@ main(args) {
   var vp = new VicePresidentPurchasePower();
   var president = new PresidentPurchasePower();
 
-  manager.successor = director;
-  director.successor = vp;
-  vp.successor = president;
+  manager.reportsTo = director;
+  director.reportsTo = vp;
+  vp.reportsTo = president;
 
   var amount = (args[0] == null) ?
     1000 : double.parse(args[0]);
