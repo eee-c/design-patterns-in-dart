@@ -6,7 +6,11 @@ abstract class PurchasePower {
     _successor = successor;
   }
 
-  void processRequest(PurchaseRequest request);
+  void processRequest(PurchaseRequest request) {
+    if (_successor != null) {
+      _successor.processRequest(request);
+    }
+  }
 }
 
 class ManagerPurchasePower extends PurchasePower {
@@ -15,10 +19,9 @@ class ManagerPurchasePower extends PurchasePower {
   void processRequest(PurchaseRequest request) {
     if (request.amount < _allowable) {
       print("Manager will approve $request.");
+      return;
     }
-    else if (_successor != null) {
-      _successor.processRequest(request);
-    }
+    super.processRequest(request);
   }
 }
 
@@ -28,10 +31,9 @@ class DirectorPurchasePower extends PurchasePower {
   void processRequest(PurchaseRequest request) {
     if (request.amount < _allowable) {
       print("Director will approve $request");
+      return;
     }
-    else if (_successor != null) {
-      _successor.processRequest(request);
-    }
+    super.processRequest(request);
   }
 }
 
@@ -41,10 +43,9 @@ class VicePresidentPurchasePower extends PurchasePower {
   void processRequest(PurchaseRequest request) {
     if (request.amount < _allowable) {
       print("Vice President will approve $request");
+      return;
     }
-    else if (_successor != null) {
-      _successor.processRequest(request);
-    }
+    super.processRequest(request);
   }
 }
 
@@ -54,10 +55,9 @@ class PresidentPurchasePower extends PurchasePower {
   void processRequest(PurchaseRequest request) {
     if (request.amount < _allowable) {
       print("President will approve $request");
+      return;
     }
-    else {
-      print("Your request for $request needs a board meeting!");
-    }
+    super.processRequest(request);
   }
 }
 
