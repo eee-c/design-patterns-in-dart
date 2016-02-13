@@ -1,15 +1,16 @@
 #!/usr/bin/env dart
 
+import 'dart:mirrors' show reflect;
+
 abstract class PurchasePower {
   PurchasePower _successor;
   void set successor(PurchasePower successor) {
     _successor = successor;
   }
 
-  void processRequest(PurchaseRequest request) {
-    if (_successor != null) {
-      _successor.processRequest(request);
-    }
+  noSuchMethod(args) {
+    if (_successor == null) return;
+    reflect(_successor).delegate(args);
   }
 }
 
@@ -26,15 +27,15 @@ class ManagerPurchasePower extends PurchasePower {
 }
 
 class DirectorPurchasePower extends PurchasePower {
-  final double _allowable = 20 * 1000.0;
+  // final double _allowable = 20 * 1000.0;
 
-  void processRequest(PurchaseRequest request) {
-    if (request.amount < _allowable) {
-      print("Director will approve $request");
-      return;
-    }
-    super.processRequest(request);
-  }
+  // void processRequest(PurchaseRequest request) {
+  //   if (request.amount < _allowable) {
+  //     print("Director will approve $request");
+  //     return;
+  //   }
+  //   super.processRequest(request);
+  // }
 }
 
 class VicePresidentPurchasePower extends PurchasePower {
@@ -55,9 +56,10 @@ class PresidentPurchasePower extends PurchasePower {
   void processRequest(PurchaseRequest request) {
     if (request.amount < _allowable) {
       print("President will approve $request");
-      return;
     }
-    super.processRequest(request);
+    else {
+      print("Your request for $request needs a board meeting!");
+    }
   }
 }
 
