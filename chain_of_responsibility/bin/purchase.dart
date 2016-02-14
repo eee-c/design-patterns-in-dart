@@ -1,10 +1,21 @@
 #!/usr/bin/env dart
 
 abstract class PurchasePower {
+  static Map<Type, PurchasePower> _instances = {};
+  PurchasePower() {
+    _instances[this.runtimeType] = this;
+  }
+
   // Successor in the chain of responsibility
   PurchasePower _reportsTo;
   void set reportsTo(PurchasePower reportsTo) {
     _reportsTo = reportsTo;
+  }
+
+  void _directReport(Type purchasePowerType) {
+    if (!_instances.containsKey(purchasePowerType)) return;
+    var lastInstance = _instances[purchasePowerType];
+    lastInstance.reportsTo = this;
   }
 
   void processRequest(PurchaseRequest request) {
@@ -29,6 +40,10 @@ class ManagerPurchasePower extends PurchasePower {
 class DirectorPurchasePower extends PurchasePower {
   final double _allowable = 20 * 1000.0;
 
+  DirectorPurchasePower() : super() {
+    _directReport(ManagerPurchasePower);
+  }
+
   void processRequest(PurchaseRequest request) {
     if (request.amount < _allowable) {
       print("Director will approve $request");
@@ -41,6 +56,10 @@ class DirectorPurchasePower extends PurchasePower {
 class VicePresidentPurchasePower extends PurchasePower {
   final double _allowable = 40 * 1000.0;
 
+  VicePresidentPurchasePower() : super() {
+    _directReport(DirectorPurchasePower);
+  }
+
   void processRequest(PurchaseRequest request) {
     if (request.amount < _allowable) {
       print("Vice President will approve $request");
@@ -52,6 +71,10 @@ class VicePresidentPurchasePower extends PurchasePower {
 
 class PresidentPurchasePower extends PurchasePower {
   final double _allowable = 60 * 1000.0;
+
+  PresidentPurchasePower() : super() {
+    _directReport(VicePresidentPurchasePower);
+  }
 
   void processRequest(PurchaseRequest request) {
     if (request.amount < _allowable) {
@@ -71,14 +94,14 @@ class PurchaseRequest {
 }
 
 main(args) {
-  var manager = new ManagerPurchasePower();
-  var director = new DirectorPurchasePower();
-  var vp = new VicePresidentPurchasePower();
+  var manager   = new ManagerPurchasePower();
+  var director  = new DirectorPurchasePower();
+  var vp        = new VicePresidentPurchasePower();
   var president = new PresidentPurchasePower();
 
-  manager.reportsTo = director;
-  director.reportsTo = vp;
-  vp.reportsTo = president;
+  // manager.reportsTo = director;
+  // director.reportsTo = vp;
+  // vp.reportsTo = president;
 
   var amount = (args[0] == null) ?
     1000 : double.parse(args[0]);
