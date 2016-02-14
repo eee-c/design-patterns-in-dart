@@ -1,64 +1,68 @@
 #!/usr/bin/env dart
 
-abstract class PurchasePower {
-  // Successor in the chain of responsibility
-  PurchasePower _reportsTo;
-  void set reportsTo(PurchasePower reportsTo) {
-    _reportsTo = reportsTo;
-  }
-
-  void processRequest(PurchaseRequest request) {
-    if (_reportsTo != null) {
-      _reportsTo.processRequest(request);
-    }
-  }
+class Employee {
+  String firstName, lastName;
+  Employee reportsTo;
 }
 
-class ManagerPurchasePower extends PurchasePower {
+@proxy
+abstract class _PurchasePower {
+  get successor => reportsTo;
+
+  void processRequest(PurchaseRequest request) {
+    if (_processRequest(request)) return;
+    if (successor == null) return;
+
+    successor.processRequest(request);
+  }
+
+  bool _processRequest(_) => false;
+}
+
+class Manager extends Employee with _PurchasePower {
   final double _allowable = 10 * 1000.0;
 
-  void processRequest(PurchaseRequest request) {
-    if (request.amount < _allowable) {
-      print("Manager will approve $request.");
-      return;
-    }
-    super.processRequest(request);
+  bool _processRequest(PurchaseRequest request) {
+    if (request.amount > _allowable) return false;
+
+    print("Manager will approve $request.");
+    return true;
   }
 }
 
-class DirectorPurchasePower extends PurchasePower {
+class Director extends Employee with _PurchasePower {
   final double _allowable = 20 * 1000.0;
 
-  void processRequest(PurchaseRequest request) {
-    if (request.amount < _allowable) {
-      print("Director will approve $request");
-      return;
-    }
-    super.processRequest(request);
+  bool _processRequest(PurchaseRequest request) {
+    if (request.amount > _allowable) return false;
+
+    print("Director will approve $request");
+    return true;
   }
 }
 
-class VicePresidentPurchasePower extends PurchasePower {
+class VicePresident extends Employee with _PurchasePower {
   final double _allowable = 40 * 1000.0;
 
-  void processRequest(PurchaseRequest request) {
-    if (request.amount < _allowable) {
-      print("Vice President will approve $request");
-      return;
-    }
-    super.processRequest(request);
+  bool _processRequest(PurchaseRequest request) {
+    if (request.amount > _allowable) return false;
+
+    print("Vice President will approve $request");
+    return true;
   }
 }
 
-class PresidentPurchasePower extends PurchasePower {
+class President extends Employee with _PurchasePower {
   final double _allowable = 60 * 1000.0;
 
-  void processRequest(PurchaseRequest request) {
-    if (request.amount < _allowable) {
-      print("President will approve $request");
-      return;
+  bool _processRequest(PurchaseRequest request) {
+    if (request.amount > _allowable) {
+      print("Your request for $request needs a board meeting!");
     }
-    super.processRequest(request);
+    else {
+      print("President will approve $request");
+    }
+    return true;
   }
 }
 
@@ -71,10 +75,10 @@ class PurchaseRequest {
 }
 
 main(args) {
-  var manager = new ManagerPurchasePower();
-  var director = new DirectorPurchasePower();
-  var vp = new VicePresidentPurchasePower();
-  var president = new PresidentPurchasePower();
+  var manager = new Manager();
+  var director = new Director();
+  var vp = new VicePresident();
+  var president = new President();
 
   manager.reportsTo = director;
   director.reportsTo = vp;
