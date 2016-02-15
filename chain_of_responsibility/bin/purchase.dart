@@ -3,10 +3,15 @@
 class Employee {
   String firstName, lastName;
   Employee reportsTo;
+
+  String get title => "${this.runtimeType}";
+  String toString() => title;
 }
 
 @proxy
 abstract class _PurchasePower {
+  final double _allowable = 0.0;
+
   get successor => reportsTo;
 
   void processRequest(PurchaseRequest request) {
@@ -16,53 +21,36 @@ abstract class _PurchasePower {
     successor.processRequest(request);
   }
 
-  bool _processRequest(_) => false;
+  bool _processRequest(PurchaseRequest request) {
+    if (request.amount > _allowable) return false;
+
+    print("$this will approve $request.");
+    return true;
+  }
 }
 
 class Manager extends Employee with _PurchasePower {
   final double _allowable = 10 * 1000.0;
-
-  bool _processRequest(PurchaseRequest request) {
-    if (request.amount > _allowable) return false;
-
-    print("Manager will approve $request.");
-    return true;
-  }
 }
 
 class Director extends Employee with _PurchasePower {
   final double _allowable = 20 * 1000.0;
-
-  bool _processRequest(PurchaseRequest request) {
-    if (request.amount > _allowable) return false;
-
-    print("Director will approve $request");
-    return true;
-  }
 }
 
 class VicePresident extends Employee with _PurchasePower {
   final double _allowable = 40 * 1000.0;
-
-  bool _processRequest(PurchaseRequest request) {
-    if (request.amount > _allowable) return false;
-
-    print("Vice President will approve $request");
-    return true;
-  }
 }
 
 class President extends Employee with _PurchasePower {
   final double _allowable = 60 * 1000.0;
 
-  bool _processRequest(PurchaseRequest request) {
+  void processRequest(PurchaseRequest request) {
     if (request.amount > _allowable) {
       print("Your request for $request needs a board meeting!");
     }
     else {
       print("President will approve $request");
     }
-    return true;
   }
 }
 
