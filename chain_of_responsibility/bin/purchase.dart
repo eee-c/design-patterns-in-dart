@@ -1,5 +1,7 @@
 #!/usr/bin/env dart
 
+import 'dart:mirrors' show MirrorSystem, reflect;
+
 class Employee {
   String firstName, lastName;
   Employee reportsTo;
@@ -14,14 +16,17 @@ abstract class _PurchasePower {
 
   get successor => reportsTo;
 
-  void processRequest(PurchaseRequest request) {
-    if (_processRequest(request)) return;
-    if (successor == null) return;
+  noSuchMethod(args) {
+    Symbol handlerMethod = new Symbol("xxx_${MirrorSystem.getName(args.memberName)}");
+    var req = args.positionalArguments;
 
-    successor.processRequest(request);
+    if (reflect(this).invoke(handlerMethod, req).reflectee) return;
+
+    if (successor == null) return;
+    reflect(successor).delegate(args);
   }
 
-  bool _processRequest(PurchaseRequest request) {
+  bool xxx_processRequest(PurchaseRequest request) {
     if (request.amount > _allowable) return false;
 
     print("$this will approve $request.");
