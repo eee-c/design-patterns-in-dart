@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Chain of Responsibility</title>
+
+    <link rel="stylesheet"
+       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+       integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+       crossorigin="anonymous">
+    <link rel="stylesheet"
+       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+       integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r"
+       crossorigin="anonymous">
+
+    <style>
+      .chain-link {
+        padding: 50px;
+        border: 3px #ccc solid;
+        border-radius: 8px;
+      }
+    </style>
+
+    <script type="application/dart" src="chain_of_responsibility.dart"></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Who Is Responsible?</h1>
+
+      <code>#top</code>
+      <div id="top" class="chain-link">
+        <code>#middle</code>
+        <div id="middle" class="chain-link">
+          <code>#bottom</code>
+          <div id="bottom" class="chain-link">
+            Click me.
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
