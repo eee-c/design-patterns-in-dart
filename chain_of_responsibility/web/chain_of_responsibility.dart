@@ -6,13 +6,14 @@ abstract class CellFormatter {
 
   void processRequest(Event e) {
     if (!isCell(e)) return;
-    if (handleRequest(e)) return;
+    if (_handleRequest(e)) return;
     if (nextHandler == null) return;
 
     nextHandler.processRequest(e);
   }
 
-  bool handleRequest(Event e) => false;
+  // Subclasses handle requests as needed
+  bool _handleRequest(Event e) => false;
 
   bool isCell(Event e) {
     var input = e.target;
@@ -23,7 +24,7 @@ abstract class CellFormatter {
 }
 
 class NumberFormatter extends CellFormatter {
-  bool handleRequest(Event e) {
+  bool _handleRequest(Event e) {
     var input = e.target;
     RegExp exp = new RegExp(r"^\s*[\d\.]+\s*$");
     if (!exp.hasMatch(input.value)) return false;
@@ -36,7 +37,7 @@ class NumberFormatter extends CellFormatter {
 }
 
 class DateFormatter extends CellFormatter {
-  bool handleRequest(Event e) {
+  bool _handleRequest(Event e) {
     var input = e.target;
     RegExp exp = new RegExp(r"^\s*[\d/-]+\s*$");
     if (!exp.hasMatch(input.value)) return false;
@@ -48,7 +49,7 @@ class DateFormatter extends CellFormatter {
 }
 
 class TextFormatter extends CellFormatter {
-  bool handleRequest(Event e) {
+  bool _handleRequest(Event e) {
     var input = e.target;
     input.style.textAlign = 'left';
     return true;
@@ -65,31 +66,23 @@ main() {
   number.nextHandler = date;
   date.nextHandler = text;
 
-  var subscription =
-    container.
-    onChange.
-    listen(number.processRequest);
-
-  var c = new StreamController();
+  var c = new StreamController.broadcast();
   container.onChange.listen(c.add);
   container.onClick.listen(c.add);
 
-  c.stream.listen(number.processRequest);
-
-
+  var subscription = c.stream.
+    listen(number.processRequest);
 
   query('#no-numbers').onChange.listen((e){
     var el = e.target;
     if (el.checked) {
       subscription.cancel();
-      subscription = container.
-        onChange.
+      subscription = c.stream.
         listen(date.processRequest);
     }
     else {
       subscription.cancel();
-      subscription = container.
-        onChange.
+      subscription = c.stream.
         listen(number.processRequest);
     }
   });
