@@ -1,3 +1,4 @@
+import 'dart:async' show StreamController;
 import 'dart:html' show query, Event, InputElement;
 
 abstract class CellFormatter {
@@ -64,5 +65,43 @@ main() {
   number.nextHandler = date;
   date.nextHandler = text;
 
-  container.onChange.listen(number.processRequest);
+  var subscription =
+    container.
+    onChange.
+    listen(number.processRequest);
+
+  var c = new StreamController();
+  container.onChange.listen(c.add);
+  container.onClick.listen(c.add);
+
+  c.stream.listen(number.processRequest);
+
+
+
+  query('#no-numbers').onChange.listen((e){
+    var el = e.target;
+    if (el.checked) {
+      subscription.cancel();
+      subscription = container.
+        onChange.
+        listen(date.processRequest);
+    }
+    else {
+      subscription.cancel();
+      subscription = container.
+        onChange.
+        listen(number.processRequest);
+    }
+  });
+
+  query('#no-text').onChange.listen((e){
+    var el = e.target;
+    if (el.checked) {
+      date.nextHandler = null;
+    }
+    else {
+      date.nextHandler = text;
+    }
+  });
+
 }
