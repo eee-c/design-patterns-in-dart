@@ -1,32 +1,68 @@
-import 'dart:html' show query;
+import 'dart:html' show query, Event, InputElement;
+
+abstract class CellFormatter {
+  CellFormatter nextHandler;
+
+  void processRequest(Event e) {
+    if (!isCell(e)) return;
+    if (handleRequest(e)) return;
+    if (nextHandler == null) return;
+
+    nextHandler.processRequest(e);
+  }
+
+  bool handleRequest(Event e) => false;
+
+  bool isCell(Event e) {
+    var input = e.target;
+    if (input is! InputElement) return false;
+    if (input.type != 'text') return false;
+    return true;
+  }
+}
+
+class NumberFormatter extends CellFormatter {
+  bool handleRequest(Event e) {
+    var input = e.target;
+    RegExp exp = new RegExp(r"^\s*[\d\.]+\s*$");
+    if (!exp.hasMatch(input.value)) return false;
+
+    var val = double.parse(input.value);
+    input.value = val.toStringAsFixed(2);
+    input.style.textAlign = 'right';
+    return true;
+  }
+}
+
+class DateFormatter extends CellFormatter {
+  bool handleRequest(Event e) {
+    var input = e.target;
+    RegExp exp = new RegExp(r"^\s*[\d/-]+\s*$");
+    if (!exp.hasMatch(input.value)) return false;
+
+    var val = DateTime.parse(input.value);
+    input.value = val.toString().replaceFirst(' 00:00:00.000', '');
+    return true;
+  }
+}
+
+class TextFormatter extends CellFormatter {
+  bool handleRequest(Event e) {
+    var input = e.target;
+    input.style.textAlign = 'left';
+    return true;
+  }
+}
 
 main() {
-  var bottom = query('#bottom'),
-    middle = query('#middle'),
-    top = query('#top');
+  var container = query('.container');
 
-  bottom.onClick.listen((e){
-    if (e.ctrlKey) return;
-    if (e.shiftKey) return;
+  var number = new NumberFormatter();
+  var date = new DateFormatter();
+  var text = new TextFormatter();
 
-    bottom.style.border =
-      bottom.style.border.contains('green') ?
-        '' : '3px green dashed';
-    e.stopPropagation();
-  });
+  number.nextHandler = date;
+  date.nextHandler = text;
 
-  middle.onClick.listen((e){
-    if (e.ctrlKey) return;
-
-    middle.style.border =
-      middle.style.border.contains('blue') ?
-        '' : '3px blue dashed';
-    e.stopPropagation();
-  });
-
-  top.onClick.listen((_){
-    top.style.border =
-      top.style.border.contains('orange') ?
-        '' : '3px orange dotted';
-  });
+  container.onChange.listen(number.processRequest);
 }
