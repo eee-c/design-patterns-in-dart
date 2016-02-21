@@ -4,12 +4,14 @@ import 'dart:html' show query, Event, InputElement;
 abstract class CellFormatter {
   CellFormatter nextHandler;
 
-  void processRequest(Event e) {
+  CellFormatter([this.nextHandler]);
+
+  void call(Event e) {
     if (!isCell(e)) return;
     if (_handleRequest(e)) return;
     if (nextHandler == null) return;
 
-    nextHandler.processRequest(e);
+    nextHandler(e);
   }
 
   // Subclasses handle requests as needed
@@ -24,6 +26,8 @@ abstract class CellFormatter {
 }
 
 class NumberFormatter extends CellFormatter {
+  NumberFormatter([nextHandler]) : super(nextHandler);
+
   bool _handleRequest(Event e) {
     var input = e.target;
     RegExp exp = new RegExp(r"^\s*[\d\.]+\s*$");
@@ -37,6 +41,8 @@ class NumberFormatter extends CellFormatter {
 }
 
 class DateFormatter extends CellFormatter {
+  DateFormatter([nextHandler]) : super(nextHandler);
+
   bool _handleRequest(Event e) {
     var input = e.target;
     RegExp exp = new RegExp(r"^\s*[\d/-]+\s*$");
@@ -49,6 +55,8 @@ class DateFormatter extends CellFormatter {
 }
 
 class TextFormatter extends CellFormatter {
+  TextFormatter([nextHandler]) : super(nextHandler);
+
   bool _handleRequest(Event e) {
     var input = e.target;
     input.style.textAlign = 'left';
@@ -59,42 +67,38 @@ class TextFormatter extends CellFormatter {
 main() {
   var container = query('.container');
 
-  var number = new NumberFormatter();
-  var date = new DateFormatter();
-  var text = new TextFormatter();
-
-  number.nextHandler = date;
-  date.nextHandler = text;
+  var textFormat = new TextFormatter();
+  var dateFormat = new DateFormatter(textFormat);
+  var numberFormat = new NumberFormatter(dateFormat);
 
   var c = new StreamController.broadcast();
   container.onChange.listen(c.add);
   container.onClick.listen(c.add);
 
   var subscription = c.stream.
-    listen(number.processRequest);
+    listen(numberFormat);
 
   query('#no-numbers').onChange.listen((e){
     var el = e.target;
     if (el.checked) {
       subscription.cancel();
       subscription = c.stream.
-        listen(date.processRequest);
+        listen(dateFormat);
     }
     else {
       subscription.cancel();
       subscription = c.stream.
-        listen(number.processRequest);
+        listen(numberFormat);
     }
   });
 
   query('#no-text').onChange.listen((e){
     var el = e.target;
     if (el.checked) {
-      date.nextHandler = null;
+      dateFormat.nextHandler = null;
     }
     else {
-      date.nextHandler = text;
+      dateFormat.nextHandler = textFormat;
     }
   });
-
 }
