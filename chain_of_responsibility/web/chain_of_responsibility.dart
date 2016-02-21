@@ -1,13 +1,12 @@
 import 'dart:async' show StreamController;
 import 'dart:html' show query, Event, InputElement;
 
-abstract class CellFormatter {
-  CellFormatter nextHandler;
 
-  CellFormatter([this.nextHandler]);
+abstract class _CellFormatter {
+  _CellFormatter nextHandler;
 
   void call(Event e) {
-    if (!isCell(e)) return;
+    if (!_isCell(e)) return;
     if (_handleRequest(e)) return;
     if (nextHandler == null) return;
 
@@ -17,7 +16,7 @@ abstract class CellFormatter {
   // Subclasses handle requests as needed
   bool _handleRequest(Event e) => false;
 
-  bool isCell(Event e) {
+  bool _isCell(Event e) {
     var input = e.target;
     if (input is! InputElement) return false;
     if (input.type != 'text') return false;
@@ -25,9 +24,30 @@ abstract class CellFormatter {
   }
 }
 
-class NumberFormatter extends CellFormatter {
-  NumberFormatter([nextHandler]) : super(nextHandler);
+class CellFormatter {
+  var first;
 
+  var _numberFormat = new NumberFormatter();
+  var _dateFormat = new DateFormatter();
+  var _textFormat = new TextFormatter();
+
+  CellFormatter() {
+    _numberFormat.nextHandler = _dateFormat;
+    _dateFormat.nextHandler = _textFormat;
+    first = _numberFormat;
+  }
+
+  void call(Event e) { first(e); }
+
+  void ignore(String format) {
+    if (format == 'number') first = _dateFormat;
+  }
+  void obey(String format) {
+    if (format == 'number') first = _numberFormat;
+  }
+}
+
+class NumberFormatter extends _CellFormatter {
   bool _handleRequest(Event e) {
     var input = e.target;
     RegExp exp = new RegExp(r"^\s*[\d\.]+\s*$");
@@ -40,9 +60,7 @@ class NumberFormatter extends CellFormatter {
   }
 }
 
-class DateFormatter extends CellFormatter {
-  DateFormatter([nextHandler]) : super(nextHandler);
-
+class DateFormatter extends _CellFormatter {
   bool _handleRequest(Event e) {
     var input = e.target;
     RegExp exp = new RegExp(r"^\s*[\d/-]+\s*$");
@@ -54,9 +72,7 @@ class DateFormatter extends CellFormatter {
   }
 }
 
-class TextFormatter extends CellFormatter {
-  TextFormatter([nextHandler]) : super(nextHandler);
-
+class TextFormatter extends _CellFormatter {
   bool _handleRequest(Event e) {
     var input = e.target;
     input.style.textAlign = 'left';
@@ -66,39 +82,20 @@ class TextFormatter extends CellFormatter {
 
 main() {
   var container = query('.container');
-
-  var textFormat = new TextFormatter();
-  var dateFormat = new DateFormatter(textFormat);
-  var numberFormat = new NumberFormatter(dateFormat);
+  var cellFormat = new CellFormatter();
 
   var c = new StreamController.broadcast();
   container.onChange.listen(c.add);
   container.onClick.listen(c.add);
-
-  var subscription = c.stream.
-    listen(numberFormat);
+  c.stream.listen(cellFormat);
 
   query('#no-numbers').onChange.listen((e){
     var el = e.target;
     if (el.checked) {
-      subscription.cancel();
-      subscription = c.stream.
-        listen(dateFormat);
+      cellFormat.ignore('number');
     }
     else {
-      subscription.cancel();
-      subscription = c.stream.
-        listen(numberFormat);
-    }
-  });
-
-  query('#no-text').onChange.listen((e){
-    var el = e.target;
-    if (el.checked) {
-      dateFormat.nextHandler = null;
-    }
-    else {
-      dateFormat.nextHandler = textFormat;
+      cellFormat.obey('number');
     }
   });
 }
